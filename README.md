@@ -1,3 +1,5 @@
 ## obspy/binder-example
+Launch it here: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jandyr/Course-coppe/tree/main/HEAD)
 
-Simple most example how to setup a repository to use on mybinder.org. Launch it here: https://mybinder.org/v2/gh/obspy/binder-example/master
+.. image:: https://mybinder.org/badge_logo.svg
+ :target: https://mybinder.org/v2/gh/jandyr/Course-coppe/tree/main/HEAD
