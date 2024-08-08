@@ -1,6 +1,30 @@
-name: obspy-binder-example
+name: ProSeisSN
 channels:
   - conda-forge
+  - defaults
 dependencies:
-  - python =3
-  - obspy >=1.2.0
+# python environment
+  - numpy
+  - python
+  - scipy
+  - numba
+
+  - obspy
+  - pathlib
+  - pandas
+  - ipython
+  - ipywidgets
+  - jupyterlab
+  - jupyter
+  - pip
+  - matplotlib
+  - xarray
+  - netcdf4
+  - packaging
+  - pygmt
+  - pycwt
+  - mpi4py
+  - pyasdf
+  - cartopy
+  - plotly
+  - utm
