@@ -4,11 +4,6 @@
 
 You can view and run the course materials online by clicking on the badge below:
 
-
-\author{Jandyr Travassos \\
-	LAMEMO/COPPE/UFRJ}
-
-
 Launch it here: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jandyr/ProSeisSN/main/)
 
 .. image:: https://mybinder.org/badge_logo.svg
