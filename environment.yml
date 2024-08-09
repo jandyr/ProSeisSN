@@ -7,8 +7,7 @@ dependencies:
   - numpy
   - python
   - scipy
-  - numba
-
+#  - numba  -> A compiler for Python with a collection of decorators.
   - obspy
   - pathlib
   - pandas
