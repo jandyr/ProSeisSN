@@ -1,30 +1,25 @@
 name: ProSeisSN
 channels:
-  - conda-forge
   - defaults
+  - conda-forge
 dependencies:
-dependencies:
-  - numpy=1.16.2
-  - python=3.7
-  - scipy
-  - numba
-  - pathlib
-  - pandas
-  - ipython
-  - jupyterlab
-  - jupyter
+  - python>=3.6.4
   - pip
+  - numpy>=1.15.0
+  - scipy>=1.4.0
+  - pandas
   - matplotlib
-  - xarray
-  - netcdf4
-  - packaging
-  - gmt
-  - pygmt
-# spectral analysis using wavelets
-  - pycwt
-#
-  - mpi4py=3.0.1
-  - obspy=1.1
-# Library to read and write ASDF files.
-  - pyasdf
+  - ipython
+  - jupyter
+  - seaborn
+  - scikit-learn
+  - scikit-image
+  - pylops>=2.0.0
   - cartopy
+  - pip:
+    - lasio
+    - segyio
+    - obspy
+    - utm
+    - pyproj
+    - azure-cli
