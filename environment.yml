@@ -4,26 +4,30 @@ channels:
   - defaults
 dependencies:
 # python environment
+  - pip
   - numpy
   - python
   - scipy
-#  - numba  -> A compiler for Python with a collection of decorators.
-  - obspy
+  - numba 
   - pathlib
   - pandas
   - ipython
   - ipywidgets
   - jupyterlab
   - jupyter
-  - pip
   - matplotlib
   - xarray
   - netcdf4
   - packaging
-  - pygmt
-  - pycwt
   - mpi4py
+#
+  - obspy
+# spectral analysis using wavelets
+  - pycwt
+# Library to read and write ASDF files.
   - pyasdf
+#
+  - pygmt
   - cartopy
   - plotly
   - utm
