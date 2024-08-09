@@ -3,31 +3,28 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-# python environment
-  - pip
-  - numpy
-  - python
+dependencies:
+  - numpy=1.16.2
+  - python=3.7
   - scipy
-  - numba 
+  - numba
   - pathlib
   - pandas
   - ipython
-  - ipywidgets
   - jupyterlab
   - jupyter
+  - pip
   - matplotlib
   - xarray
   - netcdf4
   - packaging
-  - mpi4py
-#
-  - obspy
+  - gmt
+  - pygmt
 # spectral analysis using wavelets
   - pycwt
+#
+  - mpi4py=3.0.1
+  - obspy=1.1
 # Library to read and write ASDF files.
   - pyasdf
-#
-  - pygmt
   - cartopy
-  - plotly
-  - utm
