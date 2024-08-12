@@ -57,7 +57,7 @@ You can run the course materials online by clicking on:
 
  Test run on the cloud:
  
-    - [**Hello World!**](https://github.com/jandyr/ProSeisSN/main/hello.ipynb): create and display 
+- [**Hello World!**] (https://github.com/jandyr/ProSeisSN/main/hello.ipynb): create and display 
 
 
 ## Additional Resources
