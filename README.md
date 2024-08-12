@@ -55,10 +55,7 @@ You can run the course materials online by clicking on:
 .. image:: https://mybinder.org/badge_logo.svg
  :target: https://mybinder.org/v2/gh/jandyr/ProSeisSN/main
 
- Test run on the cloud:
- 
-- [**Hello World!**] (https://github.com/jandyr/ProSeisSN/main/hello.ipynb): create and display 
-
+To test run on the cloud click on **hello.ipynb**
 
 ## Additional Resources
 
