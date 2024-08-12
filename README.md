@@ -1,5 +1,5 @@
 
-# Processamento do Sinal e do Ruído Sísmicos: Aplicações à Engenharia e ao Meio--Ambiente (ProSeisSN)
+# Processamento do Sinal e do Ruído Sísmicos: Aplicações à Engenharia e ao Meio-Ambiente (ProSeisSN)
 
 This repository contains relevant material and notebooks to guide students through the practical activities of the Course **ProSeisSN**.
 
