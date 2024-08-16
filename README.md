@@ -13,6 +13,24 @@ The repository is organized as follows.
 
 - **Unit Notes**: Written material for each Unit of the Course.
 
+## Course Environment
+
+- **JupyterLab**: a web--based user interface, which works with {\bf Jupyter Notebooks}, containing computer code, and rich text elements.
+
+- **Binder**: to open and execute the {\bf Jupyter Notebooks} on the cloud. You can run the course materials online by clicking on 
+
+ [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jandyr/ProSeisSN/main/)
+
+To test, click on **hello.ipynb** to run the run {\bf Jupyter Notebook} on the cloud.
+
+- **GitHub**: a *Git* cloud repository with a version control system. You can clone the *Repo* to your computer.
+
+- **GitHub Classroom**: for storing your assignments and Projects under your course’s {\bf GitHub} course organization.
+
+- **Discord**: for discussions and questions about the lessons and exercises.
+
+- **Anaconda**: to create a Python environment on your machine for running the Course's codes locally.
+
 ## Course content
 
 - [**Obspy**](https://github.com/jandyr/ProSeisSN/main/Obspy/ObspyIntro.ipynb): Introduction to Obspy and time series analysis.
@@ -32,7 +50,7 @@ The repository is organized as follows.
      `git clone https://github.com/jandyr/ProSeisSN`
      `cd ProSeisSN`
 
-this way your local changes are kept *local*. Alternatively you can simply **Download ZIP** to your local directory, using the *big green button*.
+this way your local changes are kept *local*. Alternatively you can simply *Download ZIP* to your local directory, using the *big green button*.
 
 - Create a conda local environment for running data exercises using
 
@@ -46,17 +64,6 @@ and deactivate it with
 
      `conda deactivate`
 
-## Run on the Cloud
-
-You can run the course materials online by clicking on:
-
- [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jandyr/ProSeisSN/main/)
-
-.. image:: https://mybinder.org/badge_logo.svg
- :target: https://mybinder.org/v2/gh/jandyr/ProSeisSN/main
-
-To test run on the cloud click on **hello.ipynb**
-
 ## Additional Resources
 
 Students are directed to reference from the Literature in the **Unit Notes**. The following refer to the basic to contruct the Course environment.
@@ -66,8 +73,4 @@ Students are directed to reference from the Literature in the **Unit Notes**. Th
 * [Jupyter Notebook Overview](https://jupyter-notebook.readthedocs.io/en/stable/)
 * [ObsPy Tutorial](https://docs.obspy.org/tutorial/)
 
-
-## Contact
-
-- [wavefrontgeo@gmail.com](mailto:wavefrontgeo@gmail.com).
 
