@@ -36,23 +36,27 @@ To test, click on **hello.ipynb** to run the run {\bf Jupyter Notebook} on the c
 - [**Obspy**](https://github.com/jandyr/ProSeisSN/main/Obspy/ObspyIntro.ipynb): Introduction to Obspy and time series analysis.
 
 
-## Usage in your local machine
+## Running the course codes
 
-1) Follow the instructions on creating the *Course Environment* at your local machine, by installing the relevant software:
+- **On the cloud**: Use *Binder* by clicking on 
+
+ [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jandyr/ProSeisSN/main/)
+
+- **Locally**: Create the *Course Environment* on your local machine, by installing the relevant software. Follow the instructions in the *Unit Notes* to install
+
 * Anaconda or Miniconda;
 * GitHub;
 * Jupyter Notebook and JupyterLab;
 * Python, ObsPy etc.
 
-2) **Local Use**
-- Fork this repository to a directory on your local machine by
+Fork this repository to a directory on your local machine by
 
      `git clone https://github.com/jandyr/ProSeisSN`
      `cd ProSeisSN`
 
 this way your local changes are kept *local*. Alternatively you can simply *Download ZIP* to your local directory, using the *big green button*.
 
-- Create a conda local environment for running data exercises using
+Create a conda local environment for running data exercises using
 
      `conda env create -f environment.yml`.
 
