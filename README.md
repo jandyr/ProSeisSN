@@ -38,7 +38,11 @@ The repository is organized as follows.
 
  [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jandyr/ProSeisSN/main/)
 
-To test, click on **hello.ipynb** to run the run {\bf Jupyter Notebook} on the cloud.
+To test, click on
+
+     `hello.ipynb`
+
+ to run the run {\bf Jupyter Notebook} on the cloud.
 
 - **Locally**: Create the *Course Environment* on your local machine, by installing the relevant software. Follow the instructions in the *Unit Notes* to install
 
