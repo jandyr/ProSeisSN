@@ -1,5 +1,5 @@
 
-# Processamento do Sinal e do Ruído Sísmicos: Aplicações à Engenharia e ao Meio-Ambiente (ProSeisSN)
+# Processamento do Sinal Sísmico (ProSeisSN)
 
 This repository contains relevant material and notebooks to guide students through the practical activities of the Course **ProSeisSN**.
 
@@ -29,7 +29,7 @@ The repository is organized as follows.
 
 ## Course content
 
-- [**Obspy**](https://github.com/jandyr/ProSeisSN/main/Obspy/ObspyIntro.ipynb): Introduction to Obspy and time series analysis.
+- [**Unit01**](https://github.com/jandyr/ProSeisSN/main/Unit01/ObspyIntro.ipynb): Introduction to Obspy and time series analysis.
 
 
 ## Running the course codes
@@ -43,7 +43,7 @@ To test, click on
      `hello.ipynb`
 
  to run the run {\bf Jupyter Notebook} on the cloud.
-
+ 
 - **Locally**: Create the *Course Environment* on your local machine, by installing the relevant software. Follow the instructions in the *Unit Notes* to install
 
 * Anaconda or Miniconda;
@@ -74,9 +74,9 @@ and deactivate it with
 
 Students are directed to reference from the Literature in the **Unit Notes**. The following refer to the basic to contruct the Course environment.
 
-* [Python tutorial](https://docs.python.org/3/tutorial/index.html)
+* [Short Python tutorial](https://swcarpentry.github.io/python-novice-inflammation/index.html)
+
+* [Longer Python tutorial](https://docs.python.org/3/tutorial/index.html)
 * [Getting Started with Anaconda](https://docs.anaconda.com/anaconda/user-guide/getting-started/)
 * [Jupyter Notebook Overview](https://jupyter-notebook.readthedocs.io/en/stable/)
 * [ObsPy Tutorial](https://docs.obspy.org/tutorial/)
-
-
