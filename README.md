@@ -29,7 +29,7 @@ The repository is organized as follows.
 
 ## Course content
 
-- [**Unit01**](https://github.com/jandyr/ProSeisSN/main/Unit01): Introduction to Obspy and time series analysis.
+- [**Unit01**](https://github.com/jandyr/ProSeisSN/Unit01): Introduction to Obspy and time series analysis.
 
 
 ## Running the course codes
