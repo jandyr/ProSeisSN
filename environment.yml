@@ -1,7 +1,7 @@
 name: ProSeisSN
 channels:
   - defaults
-  - conda-forge>=24.7.1
+  - conda-forge
 dependencies:
   - python>=3.12.5
   - cartopy
@@ -30,3 +30,4 @@ dependencies:
 # Optional package below  in pip:# 
 #    - pylint # linting  # 
 #    - black # formatting  #     
+
