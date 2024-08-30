@@ -4,22 +4,29 @@ channels:
   - conda-forge
 dependencies:
   - python>=3.12.5
-  - pip
-  - numpy>=1.15.0
-  - scipy>=1.4.0
-  - pandas
-  - matplotlib
-  - ipython
-  - jupyter
-  - seaborn
-  - scikit-learn
-  - scikit-image
-  - pylops>=2.0.0
   - cartopy
+  - pip
   - pip:
-    - lasio
-    - segyio
+    - numpy>=1.15.0
+    - scipy>=1.4.0
+    - matplotlib
+    - seaborn
     - obspy
+    - jupyterlab
+    - pandas
+    - pyqt5
+    - pyrocko
     - utm
-    - pyproj
-    - azure-cli
+    - segyio
+
+# Old stuff to weigh in #
+# - scikit-learn  #  
+#  - scikit-image  # 
+#  - pylops>=2.0.0  # 
+#  - pip:  #
+#    - lasio  #  
+#    - pyproj  #  
+#    - azure-cli  #  
+# Optional package below  in pip:# 
+#    - pylint # linting  # 
+#    - black # formatting  #     
