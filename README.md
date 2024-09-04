@@ -51,7 +51,8 @@ To test, click on
  Alternatively, go to Google Colab
 
 [Google Colab](https://colab.research.google.com/)
- 
+
+Colab supports URLs that link directly to a GitHub browser. Simply select **GitHub** and type in the address of **ProSeisSN**.
  
 - **Locally**: Create the *Course Environment* on your local machine, by installing the relevant software. Follow the instructions in the *Unit Notes* to install
 
