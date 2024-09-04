@@ -17,7 +17,9 @@ The repository is organized as follows.
 
 - **JupyterLab**: a web--based user interface, which works with {\bf Jupyter Notebooks}, containing computer code, and rich text elements.
 
-- **Binder**: to open and execute the {\bf Jupyter Notebooks} on the cloud. 
+- **Binder**: to open and execute the {\bf Jupyter Notebooks} on the cloud.
+
+- **Google Colab**: a better alternative to run the notebooks from github.
 
 - **GitHub**: a *Git* cloud repository with a version control system. You can clone the *Repo* to your computer.
 
@@ -45,6 +47,11 @@ To test, click on
      `hello.ipynb`
 
  to run the run {\bf Jupyter Notebook} on the cloud.
+
+ Alternatively, go to Google Colab
+
+[Google Colab](https://colab.research.google.com/)
+ 
  
 - **Locally**: Create the *Course Environment* on your local machine, by installing the relevant software. Follow the instructions in the *Unit Notes* to install
 
