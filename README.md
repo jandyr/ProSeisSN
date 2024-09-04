@@ -38,10 +38,13 @@ The repository is organized as follows.
 
 ## Running the course codes
 
-- **On the cloud**: Use *Binder* by clicking on 
+- **On the cloud**:
+
+* Use *Binder* by clicking on 
 
  [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jandyr/ProSeisSN/main/)
 
+<<<<<<< HEAD
 To test, type
 
      `hello.ipynb`
@@ -53,6 +56,14 @@ To test, type
 [Google Colab](https://colab.research.google.com/)
 
 Colab supports URLs that link directly to a GitHub browser. Simply select **GitHub** and type in the address of **ProSeisSN**.
+=======
+To test, click on
+     `hello.ipynb`
+to run the run {\bf Jupyter Notebook} on the cloud.
+ 
+* Alternatively, go to [Google Colab](https://colab.research.google.com/), which supports URLs that link directly to a GitHub browser. Simply select **GitHub** and type in the address of [ProSeisSN](https://github.com/jandyr/ProSeisSN).
+ 
+>>>>>>> d6645ed (Updated)
  
 - **Locally**: Create the *Course Environment* on your local machine, by installing the relevant software. Follow the instructions in the *Unit Notes* to install
 
