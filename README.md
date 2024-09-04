@@ -42,7 +42,7 @@ The repository is organized as follows.
 
  [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jandyr/ProSeisSN/main/)
 
-To test, click on
+To test, type
 
      `hello.ipynb`
 
