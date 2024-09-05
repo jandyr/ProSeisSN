@@ -36,21 +36,18 @@ The repository is organized as follows.
 - [**Unit02**](https://github.com/jandyr/ProSeisSN/tree/main/Unit02): Introduction to Obspy and time series analysis.
 
 
-## Running the course codes
+## Running the course codes on the cloud
 
 - **On the cloud**:
 
-* Use *Binder* by clicking on 
+* Use **Colab** by going to  [Google Colab](https://colab.research.google.com/), which supports URLs that link directly to a GitHub browser.
 
- [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jandyr/ProSeisSN/main/)
+Select **GitHub** and type in the address of [ProSeisSN](https://github.com/jandyr/ProSeisSN).
 
-To test, type
 
-     `hello.ipynb`
 
- to run the run {\bf Jupyter Notebook} on the cloud.
-
-* Alternatively, go to [Google Colab](https://colab.research.google.com/), which supports URLs that link directly to a GitHub browser. Simply select **GitHub** and type in the address of [ProSeisSN](https://github.com/jandyr/ProSeisSN).
+* Use **Binder** by clicking on
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jandyr/ProSeisSN/main/)
  
 - **Locally**: Create the *Course Environment* on your local machine, by installing the relevant software. Follow the instructions in the *Unit Notes* to install
 
