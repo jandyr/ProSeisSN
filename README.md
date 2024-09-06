@@ -77,7 +77,7 @@ and deactivate it with
 
 ## Additional Resources
 
-Students are directed to reference from the Literature in the **Unit Notes**. The following refer to the basic to contruct the Course environment.
+Students are directed to reference from the Literature in the **Unit Notes**. The following refers to the basics in contructing the Course environment.
 
 * [Short Python tutorial](https://swcarpentry.github.io/python-novice-inflammation/index.html)
 
