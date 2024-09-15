@@ -19,10 +19,9 @@ dependencies:
   - utm
   - segyio
   - netcdf4
+  - pyrocko::pyrocko
   - pip:
     - collections
-    - pyrocko
-    - libmseed
 
   #--- Repos  ---#
   #  - numba
