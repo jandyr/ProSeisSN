@@ -15,13 +15,14 @@ This repository contains relevant material and notebooks to guide students throu
 ## ProSeisSN structure
 
   $\bullet$ \
-    ├── **Unit**$\mathbf{nn}$: Material for each Unit of the Course. \
-    │     ├── **MdlExpo**: Expositive material in *pdf* \
-    │     ├── **MdlNbk**: Jupyter Notebooks used in the practical units \
-    │           ├── **Data**: Data used in the Notebooks \
-    │           └── **Codes**: Extra codes for the Notebooks \
-    $^{\bot}$
+  ├── **Unit**$\mathbf{nn}$: Material for each Unit of the Course. \
+  │     ├── **MdlExpo**: Expositive material in *pdf* \
+  │     ├── **MdlNbk**: Jupyter Notebooks used in the practical units \
+  │           ├── **Data**: Data used in the Notebooks \
+  │           └── **Codes**: Extra codes for the Notebooks \
+  $^{\bot}$
 
+---
 ##---------------------- Repository  -------------------------------
  
 ## Course Environment
