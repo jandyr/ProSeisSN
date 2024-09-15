@@ -1,3 +1,4 @@
+----
 # Processamento do Sinal Sísmico (ProSeisSN)
 
 This repository contains relevant material and notebooks to guide students through the practical activities of the Course **ProSeisSN**.
