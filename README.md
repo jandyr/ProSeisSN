@@ -15,6 +15,11 @@ This repository contains relevant material and notebooks to guide students throu
 
 ## ProSeisSN structure
 
+- *JupyterLab*
+- **JupyterLab**
+- ***JupyterLab***
+- ****JupyterLab****
+
   $\bullet$ \
   ├── **Unit**$\mathbf{nn}$: Material for each Unit of the Course. \
       ├── **MdlExpo**: Expositive material in *pdf* \
