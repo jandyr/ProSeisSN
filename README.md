@@ -1,12 +1,14 @@
-
 # Processamento do Sinal Sísmico (ProSeisSN)
 
 This repository contains relevant material and notebooks to guide students through the practical activities of the Course **ProSeisSN**.
 
 ## Running the course codes on the cloud
-Run the notebooks from this **GitHub** Repo on the cloud by using **Binder** by clicking on
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jandyr/ProSeisSN/main/)
+- **Run** the notebooks from this **GitHub** Repo on the cloud by using **Binder** by clicking on
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jandyr/ProSeisSN/HEAD)
 
+- **Share** the **Binder** with the URL below:
+     `https://mybinder.org/v2/gh/jandyr/ProSeisSN/HEAD`
+----
 ##---------------------- Repository  -------------------------------
 
 ## Repository Organization
