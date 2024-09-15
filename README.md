@@ -10,18 +10,26 @@ This repository contains relevant material and notebooks to guide students throu
 - **Share** the **Binder** with the URL below:
      `https://mybinder.org/v2/gh/jandyr/ProSeisSN/HEAD`
 ----
-##---------------------- Repository  -------------------------------
 
 ## Repository Organization
+- **ProSeisSN**
+    ├── **Unit**$\mathbf{nn}$: Material for each Unit of the Course.
+    │     ├── **MdlExpo**: Expositive material in *pdf*
+    │     ├── **MdlNbk**:  Notebooks
+    │           ├── **Data**: Data used in the Notebooks.
+    │           └── **Codes**: Extra codes for the Notebooks.
+    $\bot$
+
+##---------------------- Repository  -------------------------------
+
 
 The repository is organized as follows.
 
-- **Data**: input data used in the Notebooks.
+
 
 - **Notebooks**: Python codes and Jupyter Notebooks used in the practical units.
 
-- **Unit Notes**: Written material for each Unit of the Course.
-
+- 
 ## Course Environment
 
 - **JupyterLab**: a web--based user interface, which works with {\bf Jupyter Notebooks}, containing computer code, and rich text elements.
