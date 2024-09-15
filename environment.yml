@@ -19,13 +19,13 @@ dependencies:
   - segyio
   - netcdf4
   - pyrocko::pyrocko
+  - collections-extended
   - pip
   - pip:
-    - collections
     - libmseed
 
   #--- Repos  ---#
-  # 
+  # Check conda packages -> https://conda-forge.org/packages/
   #  - numba
   #  - pandas
   #  - pip
