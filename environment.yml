@@ -3,31 +3,32 @@ channels:
   - defaults
   - conda-forge
 dependencies:
-  - python>=3.12.5
+  - python
+  - ipython
+  - certifi
   - cartopy
-  - pip
-  - pip:
-    - numpy>=1.15.0
-    - scipy>=1.4.0
-    - matplotlib
-    - seaborn
-    - obspy
-    - jupyterlab
-    - pandas
-    - pyqt5
-    - pyrocko
-    - utm
-    - segyio
+  - libmseed
+  - obspy
+  - numpy
+  - scipy
+  - matplotlib
+  - numba
+  - pathlib
+  - pyrocko
+  - jupyter
+  - jupyterlab
+  - utm
+  - segyio
+  - collections
+  - netcdf4
 
-# Old stuff to weigh in #
-# - scikit-learn  #  
-#  - scikit-image  # 
-#  - pylops>=2.0.0  # 
-#  - pip:  #
-#    - lasio  #  
-#    - pyproj  #  
-#    - azure-cli  #  
-# Optional package below  in pip:# 
-#    - pylint # linting  # 
-#    - black # formatting  #     
-
+  #--- Repos  ---#
+  #  - pandas
+  #  - pip
+  #  - seaborn
+  #  - xarray
+  #  - packaging
+  #  - gmt
+  #  - pygmt
+  #  - mpi4py=3.0.1
+  #  - pyasdf
