@@ -12,12 +12,13 @@ This repository contains relevant material and notebooks to guide students throu
 ----
 
 ## Repository Organization
-- **ProSeisSN**
-    ├── **Unit**$\mathbf{nn}$: Material for each Unit of the Course. \\
-    │     ├── **MdlExpo**: Expositive material in *pdf*
-    │     ├── **MdlNbk**:  Notebooks
-    │           ├── **Data**: Data used in the Notebooks.
-    │           └── **Codes**: Extra codes for the Notebooks.
+
+- **ProSeisSN** \
+    ├── **Unit**$\mathbf{nn}$: Material for each Unit of the Course. \
+    │     ├── **MdlExpo**: Expositive material in *pdf* \
+    │     ├── **MdlNbk**:  Notebooks \
+    │           ├── **Data**: Data used in the Notebooks \
+    │           └── **Codes**: Extra codes for the Notebooks \
     $\bot$
 
 ##---------------------- Repository  -------------------------------
