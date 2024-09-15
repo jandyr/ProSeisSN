@@ -3,6 +3,7 @@
 
 This repository contains relevant material and notebooks to guide students through the practical activities of the Course **ProSeisSN**.
 
+----
 ## Running the course codes on the cloud
 - **Run** the notebooks from this **GitHub** Repo on the cloud by opening **Binder** on another tab \
   by clicking on $\rightarrow$ 
