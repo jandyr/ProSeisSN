@@ -19,7 +19,7 @@ This repository contains relevant material and notebooks to guide students throu
     │     ├── **MdlNbk**:  Notebooks \
     │           ├── **Data**: Data used in the Notebooks \
     │           └── **Codes**: Extra codes for the Notebooks \
-   $^{\bot}
+   $^{\bot}$
 
 ##---------------------- Repository  -------------------------------
 
