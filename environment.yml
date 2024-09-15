@@ -7,7 +7,6 @@ dependencies:
   - ipython
   - certifi
   - cartopy
-  - libmseed
   - obspy
   - numpy
   - scipy
@@ -22,6 +21,7 @@ dependencies:
   - pyrocko::pyrocko
   - pip:
     - collections
+    - libmseed
 
   #--- Repos  ---#
   #  - numba
