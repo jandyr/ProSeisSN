@@ -3,6 +3,12 @@
 
 This repository contains relevant material and notebooks to guide students through the practical activities of the Course **ProSeisSN**.
 
+## Running the course codes on the cloud
+Run the notebooks from this **GitHub** Repo on the cloud by using **Binder** by clicking on
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jandyr/ProSeisSN/main/)
+
+##---------------------- Repository  -------------------------------
+
 ## Repository Organization
 
 The repository is organized as follows.
@@ -36,18 +42,8 @@ The repository is organized as follows.
 - [**Unit02**](https://github.com/jandyr/ProSeisSN/tree/main/Unit02): Introduction to Obspy and time series analysis.
 
 
-## Running the course codes on the cloud
 
-- **On the cloud**:
-
-* Use **Colab** by going to  [Google Colab](https://colab.research.google.com/), which supports URLs that link directly to a GitHub browser.
-
-Select **GitHub** and type in the address of [ProSeisSN](https://github.com/jandyr/ProSeisSN).
-
-
-
-* Use **Binder** by clicking on
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jandyr/ProSeisSN/main/)
+- **Notebook handling**: You can ue **Colab** by going to  [Google Colab](https://colab.research.google.com/), which supports URLs that link directly to a GitHub browser.
  
 - **Locally**: Create the *Course Environment* on your local machine, by installing the relevant software. Follow the instructions in the *Unit Notes* to install
 
