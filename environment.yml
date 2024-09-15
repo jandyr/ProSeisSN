@@ -19,11 +19,13 @@ dependencies:
   - segyio
   - netcdf4
   - pyrocko::pyrocko
+  - pip
   - pip:
     - collections
     - libmseed
 
   #--- Repos  ---#
+  # 
   #  - numba
   #  - pandas
   #  - pip
