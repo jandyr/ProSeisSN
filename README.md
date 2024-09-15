@@ -8,7 +8,7 @@ This repository contains relevant material and notebooks to guide students throu
   by clicking on $\rightarrow$ 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jandyr/ProSeisSN/HEAD)
 
-- **Share** the **Binder** with the URL below:
+- **Share** the **Binder** with the URL:\
      `https://mybinder.org/v2/gh/jandyr/ProSeisSN/HEAD`
 ----
 
