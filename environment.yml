@@ -12,17 +12,20 @@ dependencies:
   - numpy
   - scipy
   - matplotlib
-  - numba
   - pathlib
   - pyrocko
   - jupyter
   - jupyterlab
   - utm
   - segyio
-  - collections
   - netcdf4
+  - pip:
+    - collections
+    - pyrocko
+    - libmseed
 
   #--- Repos  ---#
+  #  - numba
   #  - pandas
   #  - pip
   #  - seaborn
