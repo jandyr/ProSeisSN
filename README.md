@@ -17,21 +17,13 @@ This repository contains relevant material and notebooks to guide students throu
  $\bullet$ \
     ├── **Unit**$\mathbf{nn}$: Material for each Unit of the Course. \
     │     ├── **MdlExpo**: Expositive material in *pdf* \
-    │     ├── **MdlNbk**:  Notebooks \
+    │     ├── **MdlNbk**: Jupyter Notebooks used in the practical units \
     │           ├── **Data**: Data used in the Notebooks \
     │           └── **Codes**: Extra codes for the Notebooks \
    $^{\bot}$
 
 ##---------------------- Repository  -------------------------------
-
-
-The repository is organized as follows.
-
-
-
-- **Notebooks**: Python codes and Jupyter Notebooks used in the practical units.
-
-- 
+ 
 ## Course Environment
 
 - **JupyterLab**: a web--based user interface, which works with {\bf Jupyter Notebooks}, containing computer code, and rich text elements.
