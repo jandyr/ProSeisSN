@@ -18,8 +18,8 @@ This repository contains relevant material and notebooks to guide students throu
 - **Unit**$\mathbf{nn}$: Material for each Unit of the Course \
  **├── MdlExpo**: Expositive material in *pdf* \
  **└──  MdlNbk**:  Jupyter Notebooks used in the practical units \
- **$\quad$ $\quad$ ├── Data**: Data used in the Notebooks \
- **$\quad$ $\quad$ └── Codes**: Extra codes for the Notebooks 
+ **$\qquad$ $\qquad$ ├── Data**: Data used in the Notebooks \
+ **$\qquad$ $\qquad$ └── Codes**: Extra codes for the Notebooks 
 ---
 ##---------------------- Repository  -------------------------------
  
