@@ -17,10 +17,10 @@ This repository contains relevant material and notebooks to guide students throu
 
   $\bullet$ \
   ├── **Unit**$\mathbf{nn}$: Material for each Unit of the Course. \
-  │          ├── **MdlExpo**: Expositive material in *pdf* \
-  │          ├── **MdlNbk**: Jupyter Notebooks used in the practical units \
-  │                       ├── **Data**: Data used in the Notebooks \
-  │                       └── **Codes**: Extra codes for the Notebooks \
+  │<br /><br />├── **MdlExpo**: Expositive material in *pdf* \
+  │<br /><br />├── **MdlNbk**: Jupyter Notebooks used in the practical units \
+  │<br /><br /><br /><br />├── **Data**: Data used in the Notebooks \
+  │<br /><br /><br /><br />└── **Codes**: Extra codes for the Notebooks \
   $^{\bot}$
 
 ---
