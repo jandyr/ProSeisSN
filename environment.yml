@@ -20,15 +20,15 @@ dependencies:
   - netcdf4
   - pyrocko::pyrocko
   - collections-extended
-  - pip
-  - pip:
-    - libmseed
 
   #--- Repos  ---#
   # Check conda packages -> https://conda-forge.org/packages/
+  
   #  - numba
   #  - pandas
   #  - pip
+  #  - pip:
+  #    - libmseed
   #  - seaborn
   #  - xarray
   #  - packaging
