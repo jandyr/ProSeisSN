@@ -12,6 +12,7 @@ dependencies:
   - scipy
   - matplotlib
   - ipympl
+  - ipywidgets
   - pathlib
   - pyrocko
   - jupyter
