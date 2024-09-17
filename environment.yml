@@ -12,7 +12,8 @@ dependencies:
   - scipy
   - matplotlib
   - ipympl
-  - ipywidgets
+  - ipywidgets>=8.1.5
+  - widgetsnbextension>=4.0.13
   - pathlib
   - pyrocko
   - jupyter
