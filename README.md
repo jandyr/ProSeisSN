@@ -11,6 +11,11 @@ This repository contains relevant material and notebooks to guide students throu
 
 - **Share** the **Binder** with the URL:\
      `https://mybinder.org/v2/gh/jandyr/ProSeisSN/HEAD`
+  
+- **Notebook handling**: You can ue **Colab** by going to  [Google Colab](https://colab.research.google.com/), which supports URLs that link directly to a GitHub browser.
+ 
+- **Locally**: Create the *Course Environment* on your local machine, by installing the relevant software. Follow the instructions in the *Unit Notes* to install.
+
 ----
 
 ## ProSeisSN structure
@@ -29,7 +34,7 @@ This repository contains relevant material and notebooks to guide students throu
 
 - **Binder**: to open and execute the {\bf Jupyter Notebooks} on the cloud.
 
-- **Google Colab**: a better alternative to run the notebooks from github.
+- **Google Colab**: an easy way to edit the notebooks from the github repo. Notebooks are not designed to run in **Google Colab**.
 
 - **GitHub**: a *Git* cloud repository with a version control system. You can clone the *Repo* to your computer.
 
@@ -43,18 +48,10 @@ This repository contains relevant material and notebooks to guide students throu
 
 - [**Unit01**](https://github.com/jandyr/ProSeisSN/tree/main/Unit01): Overview of Geophysics. Course environment.
 
-- [**Unit02**](https://github.com/jandyr/ProSeisSN/tree/main/Unit02): Introduction to Obspy and time series analysis.
+- [**Unit02**](https://github.com/jandyr/ProSeisSN/tree/main/Unit02): Introduction to Obspy and data retrieving.
 
-
-
-- **Notebook handling**: You can ue **Colab** by going to  [Google Colab](https://colab.research.google.com/), which supports URLs that link directly to a GitHub browser.
- 
-- **Locally**: Create the *Course Environment* on your local machine, by installing the relevant software. Follow the instructions in the *Unit Notes* to install
-
-* Anaconda or Miniconda;
-* GitHub;
-* Jupyter Notebook and JupyterLab;
-* Python, ObsPy etc.
+---
+## Additional Resources
 
 Fork this repository to a directory on your local machine by
 
@@ -75,7 +72,7 @@ and deactivate it with
 
      `conda deactivate`
 
-## Additional Resources
+## Web references
 
 Students are directed to reference from the Literature in the **Unit Notes**. The following refers to the basics in contructing the Course environment.
 
