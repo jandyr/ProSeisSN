@@ -12,7 +12,7 @@ This repository contains relevant material and notebooks to guide students throu
 - **Share** the **Binder** with the URL:\
      `https://mybinder.org/v2/gh/jandyr/ProSeisSN/HEAD`
   
-- **Notebook handling**: You can ue **Colab** by going to  [Google Colab](https://colab.research.google.com/), which supports URLs that link directly to a GitHub browser.
+- **Notebook handling with AI**: Use **Colab** by going to  [Google Colab](https://colab.research.google.com/), which supports URLs that link directly to a GitHub browser.
  
 - **Locally**: Create the *Course Environment* on your local machine, by installing the relevant software. Follow the instructions in the *Unit Notes* to install.
 
