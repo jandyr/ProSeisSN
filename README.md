@@ -6,7 +6,7 @@ This repository contains relevant material and notebooks to guide students throu
 ----
 ## Running the course codes on the cloud
 - **Run** the notebooks from this **GitHub** Repo on the cloud by opening **Binder** on another tab \
-  by clicking on $\rightarrow$ 
+  by clicking with the left mouse button on $\rightarrow$ 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jandyr/ProSeisSN/HEAD)
 
 - **Share** the **Binder** with the URL:\
