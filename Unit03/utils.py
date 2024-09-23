@@ -66,3 +66,24 @@ def AuxReset(tr0, tr1):
     return tr0, tr1
 #
 # -------------- End of function   ---------------------
+#
+# ---------- lmt_ValInd  ----------
+"""
+Limits 1-D array a1 to a given value and saves the indexes to limit another  1-D array a2.
+
+Args:
+a1: The numpy array to limit.
+a2: The numpy array to limit based on the indexes of a1.
+limit_value: The value to limit a1 to.
+
+Returns:
+The limited a1 and a2.
+"""
+def lmt_ValInd(a1, a2, limit):
+#
+    indexes = np.where(a1 <= limit)
+    limited_a1 = a1[indexes]
+    limited_a2 = a2[indexes]
+    return limited_a1, limited_a2
+#
+# -------------- End of function   ---------------------
