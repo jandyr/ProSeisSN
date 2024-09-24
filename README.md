@@ -22,9 +22,20 @@ This repository contains relevant material and notebooks to guide students throu
 
 - **Unit**$\mathbf{nn}$: Material for each Unit of the Course \
  **├── MdlExpo**: Expositive material in *pdf* \
- **└──  MdlNbk**:  Jupyter Notebooks used in the practical units \
+ **├── MdlNbk**:  Jupyter Notebooks used in the practical units \
+ **└── MdlExs**:  Practical exercises \
  **$\qquad$ $\quad$ ├── Data**: Data used in the Notebooks \
  **$\qquad$ $\quad$ └── Codes**: Extra codes for the Notebooks 
+
+---
+## Course content
+
+- [**Unit01**](https://github.com/jandyr/ProSeisSN/tree/main/Unit01): Overview of Geophysics. Course environment
+
+- [**Unit02**](https://github.com/jandyr/ProSeisSN/tree/main/Unit02): Introduction to Obspy and data retrieving
+
+- [**Unit03**](https://github.com/jandyr/ProSeisSN/tree/main/Unit03): Processing passive seismic data I
+
 ---
 ##---------------------- Repository  -------------------------------
  
@@ -44,11 +55,7 @@ This repository contains relevant material and notebooks to guide students throu
 
 - **Anaconda**: to create a Python environment on your machine for running the Course's codes locally.
 
-## Course content
 
-- [**Unit01**](https://github.com/jandyr/ProSeisSN/tree/main/Unit01): Overview of Geophysics. Course environment.
-
-- [**Unit02**](https://github.com/jandyr/ProSeisSN/tree/main/Unit02): Introduction to Obspy and data retrieving.
 
 ---
 ## Additional Resources
