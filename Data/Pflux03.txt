@@ -1,0 +1,6 @@
+Unit03 ../Data/wb11793085r.mseed,
+DeMeanTrend ../Data/wb11793085d.mseed,
+Hanning 0.2,
+gain 1.0,
+lowpass 4.0,
+written: ../Data/wb11793085lp.mseed,
