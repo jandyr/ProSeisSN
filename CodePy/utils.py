@@ -81,13 +81,15 @@ An auxiliary code to aid in reseting cell to a previous cell value and
 """
 def AuxReset(tr0, tr1, lst=None, app=[None]):
 #------------------- Reset the trace from the last cell ------------------
-    ent = input(f' Run this cell again (rtn= Not, and save results)?:\n') or False
+    ent = input(f' Run this cell again (rtn= Not, and save results)?: ') or False
     if ent:
         tr1 = tr0.copy()
         print(f' Original trace copied back. Run cell again.')
     else:
         tr0 = tr1.copy()
         print(f' Resuls saved + a safety trace copy was created.')
+#                       Initialize if needed
+        lst = lst if lst_list else []
         if isinstance(lst, list):
             lst[len(lst):] = app
 #              +^^^^^^^^^+─> The slicing takes the space after the last item and unpacks "app"

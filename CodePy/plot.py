@@ -5,6 +5,8 @@ import pprint
 import numpy as np
 import math
 #\__________matplotlib functions__________/
+import matplotlib
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from mpl_toolkits.mplot3d import Axes3D
@@ -12,6 +14,9 @@ from matplotlib import mlab
 from matplotlib.colors import Normalize
 from matplotlib.colorbar import ColorbarBase
 import matplotlib.dates as mdates
+from matplotlib.colors import Normalize
+matplotlib.use('nbagg')
+plt.style.use('ggplot')
 #\_____________________________________/
 #\__________Scripts List__________/
 """
@@ -73,28 +78,31 @@ def gplot(t, tr, trlog=False, xlbl=None, ylbl=None, title=None, clr = 'k'):
 # -------------- End of function   ---------------------
 #
 # -------------- Plot spectrogram  -------------------
-def Pspect(tr, wl=None):
+def Pspect(time, trZ, wl=None):
     """
     tr: Trace object
     wlen(int or float): fft window length(s). None=128 samples
     cmap: Colormap instance
     show=False: Do not call plt.show() at end of routine
     clip=[0.0, 1.0]: Clip colormap to [lower,upper] ends.
-    norm=Normalize colorbar, dflt =
-    mult (float) – Pad zeros to length mult * wlen. 
-
     """
-    fig, ax = plt.subplots(figsize=(10,4))
-    fig.subplots_adjust(bottom=0.5)
-    cmap = mpl.cm.jet
-#    norm = mpl.colors.Normalize(vmin=5, vmax=10)
-    tr.spectrogram(tr, wlen=wl,log=True, dbscale=True, per_lap=0.9,
-                    cmap=cmap, show=False,
-                    title='Spectrogram(dB)' )
-
-    fig.colorbar(mpl.cm.ScalarMappable(cmap=cmap),              #norm=norm, 
-                 cax=ax, orientation='horizontal', label='dB')
 #
+    fig = plt.figure()
+    ax1 = fig.add_axes([0.1, 0.75, 0.7, 0.2]) #[left bottom width height]
+    ax2 = fig.add_axes([0.1, 0.1, 0.7, 0.60], sharex=ax1)
+    ax3 = fig.add_axes([0.83, 0.1, 0.03, 0.6])
+
+    #plot waveform (top subfigure)    
+    ax1.plot(time, trZ.data, 'k')
+    cmap = mpl.cm.jet
+
+    fig = trZ.spectrogram(wlen=wl,log=True, dbscale=True, per_lap=0.9,
+                    cmap=cmap, show=False,
+                    title='Spectrogram(dB)', axes=ax2)
+
+    plt.colorbar(mpl.cm.ScalarMappable(cmap=cmap), cax=ax3, label='dB')
+
+    plt.show()
 #
 # -------------- End of function   ---------------------
 #
