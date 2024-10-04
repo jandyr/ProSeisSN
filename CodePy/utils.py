@@ -77,19 +77,17 @@ An auxiliary code to aid in reseting cell to a previous cell value and
  tr0 = previous cell value
  tr1 = present cell value for future
  lst= an existing list
- app = a list object or an item to append to list lst
+ app = a *list* object to append to list *lst*
 """
-def AuxReset(tr0, tr1, lst=None, app=[None]):
+def AuxReset(tr0, tr1, lst=None, app=None):
 #------------------- Reset the trace from the last cell ------------------
-    ent = input(f' Run this cell again (rtn= Not, and save results)?: ') or False
+    ent = input(f' Run this cell again (rtn= No)?: ') or False
     if ent:
         tr1 = tr0.copy()
-        print(f' Original trace copied back. Run cell again.')
+        print(f' Original trace copied back. ==> RUN CELL AGAIN.')
     else:
         tr0 = tr1.copy()
         print(f' Resuls saved + a safety trace copy was created.')
-#                       Initialize if needed
-        lst = lst if lst_list else []
         if isinstance(lst, list):
             lst[len(lst):] = app
 #              +^^^^^^^^^+─> The slicing takes the space after the last item and unpacks "app"
