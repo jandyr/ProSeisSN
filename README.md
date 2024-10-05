@@ -84,7 +84,7 @@ and deactivate it with
 Students are directed to reference from the Literature in the **Unit Notes**. The following refers to the basics in contructing the Course environment.
 
 * [Short Python tutorial](https://swcarpentry.github.io/python-novice-inflammation/index.html)
-* [Longer Python tutorial](https://docs.python.org/3/tutorial/index.html)
+* [A Python tutorial](https://github.com/ehmatthes/intro_programming)
 * [Getting Started with Anaconda](https://docs.anaconda.com/anaconda/user-guide/getting-started/)
 * [Jupyter Notebook Overview](https://jupyter-notebook.readthedocs.io/en/stable/)
 * [ObsPy Tutorial](https://docs.obspy.org/tutorial/)
