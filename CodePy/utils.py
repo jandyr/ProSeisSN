@@ -11,25 +11,68 @@ from scipy import fftpack
 from scipy import signal
 from scipy.signal import find_peaks, peak_widths
 import scipy.fft
-
-
-
+#\__________ObsPy Utilities____________/
 import obspy.signal                    # To estimate envelpe
 from obspy.signal.array_analysis import array_processing
 from obspy.core.util import AttribDict
-
 #\_____________________________________/
 #
 #\__________Scripts List__________/
 #
 """
 Script         Description
+
+
+
 TrGain         apply a gain
 nearest_pow_2  Find power of two nearest to x
 AuxReset       saves result for the next cell.
 lmt_ValInd     Limits 1-D array a1 to a given value and saves the indexes to limit another 1-D array a2.
 """
 #\__________Scripts__________/
+#
+# ---------- Filter trace  ----------
+"""
+Find the loss of amplitude between two trace instances and apply a gain
+tr....... Original trace (modified in place!!)
+"""
+def TrFlt(trZ):
+#
+    print(f"Enter the filter, lower freq., upper freq., filter order, zerophase: ftype, f0, f1, nc, zP")
+    print(f" Filter minimum options:")
+    print(f"                lp (lowpass)  -> f0         is required")
+    print(f"                hp (highpass) -> f0         is required")
+    print(f"                bp (bandpass) -> f0 and f1 are required")
+    print(f"                bs (bandstop) -> f0 and f1 are required")
+
+    ent = input(f' Enter ftype, f0, f1, nc and zP (dflt: Nc=4, zP=True): ')
+    ent = ent.rstrip().split(' ')
+    if ent[0] == 'lp' or ent[0] == 'hp':
+        ent[0] = 'lowpass' if ent[0] == 'lp' else 'highpass'
+        ent[1] = float(ent[1])
+        ent[len(ent):] = [int(4), True] if len(ent) == 2 else [int(ent[2]), True] if len(ent) == 3 else [int(ent[2]), bool(ent[3])]
+
+    elif ent[0] == 'bp' or ent[0] == 'bs':
+        ent[0]  = 'bandpass' if ent[0] == 'bp' else 'bandstop'
+        ent[1:3] = [ float(dummy) for dummy in ent[1:3] ]
+        ent[len(ent):] = [int(4), True] if len(ent) == 3 else [int(ent[3]), True] if len(ent) == 3 else [int(ent[3]), bool(ent[4])]
+#
+#------- Acausal filter/zero phase if zP=True, otherwise a causal filter.
+#------- Filter data. Use aliases to make life easier
+    if len(ent) == 5:
+        ftype, f0, f1, nc , zP = ent[:]
+        trZ.filter(ftype, freqmin=f0, freqmax=f1, zerophase=zP, corners=nc)
+    else:
+        ftype, f0, nc , zP = ent[:]
+        f1 = None
+        trZ.filter(ftype, freq=f0, zerophase=zP, corners=nc)
+#------- Filter information
+    dummy = f0 if f1 is None else str(f0)+' '+str(f1)
+    dummy = ftype+' '+dummy
+#------- Return trace
+    return trZ, dummy
+#
+# -------------- End of function   ---------------------
 #
 # ---------- Trace gain  ----------
 """
