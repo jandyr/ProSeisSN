@@ -36,27 +36,22 @@ This repository contains relevant material and notebooks to guide students throu
 
 - [**Unit03**](https://github.com/jandyr/ProSeisSN/tree/main/Unit03): Processing passive seismic data I
 
-- [**Unit04**](https://github.com/jandyr/ProSeisSN/tree/main/Unit03): Processing passive seismic data II
 ---
 ##---------------------- Repository  -------------------------------
  
 ## Course Environment
 
-- **JupyterLab**: a web--based user interface, which works with {\bf Jupyter Notebooks}, containing computer code, and rich text elements.
+- **JupyterLab**: A web--based user interface to work with the {\bf Jupyter Notebooks}.
 
-- **Binder**: to open and execute the {\bf Jupyter Notebooks} on the cloud.
+- **Binder**: To execute the {\bf Jupyter Notebooks} on the cloud.
 
-- **Google Colab**: an easy way to edit the notebooks from the github repo. Notebooks are not designed to run in **Google Colab**.
+- **Google Colab**: A handy way to edit the notebooks from the github repo. **NB** notebooks are not designed to run in **Google Colab**.
 
-- **GitHub**: a *Git* cloud repository with a version control system. You can clone the *Repo* to your computer.
+- **GitHub**: The *Git* cloud repository with a version control system.
 
-- **GitHub Classroom**: for storing your assignments and Projects under your course’s {\bf GitHub} course organization.
-
-- **Discord**: for discussions and questions about the lessons and exercises.
+- **GitHub Classroom**: Course’s discussions, assignments and Projects $\rightarrow$ (https://classroom.google.com/u/0/c/Njg2MTY4NjAyNDg5)
 
 - **Anaconda**: to create a Python environment on your machine for running the Course's codes locally.
-
-
 
 ---
 ## Additional Resources
