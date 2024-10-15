@@ -57,20 +57,53 @@ def TrFlt(trZ):
         ent[1:3] = [ float(dummy) for dummy in ent[1:3] ]
         ent[len(ent):] = [int(4), True] if len(ent) == 3 else [int(ent[3]), True] if len(ent) == 3 else [int(ent[3]), bool(ent[4])]
 #
-#------- Acausal filter/zero phase if zP=True, otherwise a causal filter.
-#------- Filter data. Use aliases to make life easier
+    """    trace data
+    trZ=> +──+──...+──+
+          |  |     |  └──> fNy, Nyquist  frequency
+          |  |     └─────> f1, Higher cutoff frequency
+          |  └───────────> f0, Lower cutoff frequency
+          └──────────────> fmin        Minumum frequency
+    """
+#------- Use aliases to make life easier: unpack ent[:]
     if len(ent) == 5:
         ftype, f0, f1, nc , zP = ent[:]
-        trZ.filter(ftype, freqmin=f0, freqmax=f1, zerophase=zP, corners=nc)
     else:
-        ftype, f0, nc , zP = ent[:]
-        f1 = None
+        ftype, f0,     nc , zP = ent[:]
+        f1 =   f0
+#
+#------- An estimate for the lowest frequency
+    fmin = 1. / (2.0 * trZ.times(type='relative')[-1])
+    fmin = fmin if ftype in ['lowpass', 'bandstop'] else f0 / 3.
+#                   A drop in amplitude of 40dB or 1% ─> +─────+
+#------- An estimate for the highest frequency
+    if ftype in ['lowpass', 'bandpass']:
+        fmax  = 3 * f1
+#               +────+─> A drop in amplitude of 40dB or 1% 
+    else:
+        ent = input(f'-Enter a safety margin for the Nyquist (dflt: 0.8):') or '0.8'
+        ent = float( ent.rstrip().split(' ')[0] )
+        fmax  = ent * 1. / (2.0 * trZ.stats.delta)
+#
+#------- Acausal filter/zero phase if zP=True, otherwise a causal filter.
+    if ftype in ['bandpass', 'bandstop']:
+        trZ.filter(ftype, freqmin=f0, freqmax=f1, zerophase=zP, corners=nc)
+        dummy = str(f0)+' '+str(f1)
+    else:
         trZ.filter(ftype, freq=f0, zerophase=zP, corners=nc)
-#------- Filter information
-    dummy = f0 if f1 is None else str(f0)+' '+str(f1)
-    dummy = ftype+' '+dummy
-#------- Return trace
-    return trZ, dummy
+        dummy = str(f0)
+#
+    ftype = ftype+' '+dummy
+#
+    f0 = np.round(fmin, 3)
+    f1 = np.round(fmax, 3)
+    print(f">> Useful range due to {ftype} filter: {f0} to {f1}Hz.")
+    dummy = 0.8 * f1 * 2.
+    print(f"   - The maximum freq={f1}Hz requires a Nyquist of >={np.round(dummy, 3)}Hz with a 80% margin,")
+    fNy = 1. / (2.0 * trZ.stats.delta)
+    print(f"       or 1/({np.round(fNy/dummy, 0)}) of the original Nyquist.")
+#
+#------- Return filtered trace, ftype and [fmin, fmax]
+    return trZ, ftype, [fmin, fmax]
 #
 # -------------- End of function   ---------------------
 #

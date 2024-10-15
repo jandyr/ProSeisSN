@@ -27,7 +27,7 @@ gplot
 #
 # -------------- pltTrSp  ----------------------------
 """
-Plotting script for 1-D time series
+Plotting script for 2 1-D time series with two plots
 
 """
 def pltTrSp(x1, y1, x2, y2,
@@ -59,12 +59,13 @@ def pltTrSp(x1, y1, x2, y2,
 # -------------- pltTrSp  ----------------------------
 """
 Trace-like plotting script
-tr  -> A trace
+tr0 and tr1 -> Two 1-D data sets
 """
-def gplot(t, tr, trlog=False, xlbl=None, ylbl=None, title=None, clr = 'k'):
+def gplot(t, tr0, tr1=None, clr0 = 'k', clr1 = 'r', trlog=False, xlbl=None, ylbl=None, title=None):
 #------------ Plot trace
-    fig, ax = plt.subplots()
-    ax.plot(t, tr.data, clr, alpha=0.7)
+    fig, ax = plt.figure()                #subplots()
+    ax.plot(t, tr0, clr0, alpha=0.7)
+    if tr1 is not None: ax.plot(t, tr1, clr1, alpha=0.7)
     if xlbl: ax.set_xlabel(xlbl)
     if ylbl: ax.set_ylabel(ylbl)
     if ylbl: ax.set_yscale('log')
