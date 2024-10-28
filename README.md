@@ -49,7 +49,7 @@ This repository contains relevant material and notebooks to guide students throu
 
 - **GitHub**: The *Git* cloud repository with a version control system.
 
-- **Google Classroom**: Course’s discussions, assignments and Projects $\rightarrow$  [<img src="GCssRm.png" width="80">](https://classroom.google.com/u/0/c/Njg2MTY4NjAyNDg5)
+- **Google Classroom**: Course’s discussions, assignments and Projects $\rightarrow$  [<img src="GCssRm.png" width="80">](https://classroom.google.com/c/NzI3MDc0MDE1OTgx)
 
 - **Anaconda**: to create a Python environment on your machine for running the Course's codes locally.
 
