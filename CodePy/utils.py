@@ -96,10 +96,6 @@ def BeamFK(st, MTparam, phone_geo, **kwargs):
     dummy = dummy[np.argsort(dummy[:,0])]
     phone_geo = dummy
 #        └────> phone# (int), x, y (floats)
-
-    pprint.pprint(phone_geo)
-
-
 #
 #------------- FK processing (obspy) --------------------
     for ind, tr in enumerate(st):
