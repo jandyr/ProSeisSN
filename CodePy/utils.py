@@ -12,9 +12,12 @@ from scipy import signal
 from scipy.signal import find_peaks, peak_widths
 import scipy.fft
 #\__________ObsPy Utilities____________/
+from obspy import read, Stream, Trace
 import obspy.signal                    # To estimate envelpe
 from obspy.signal.array_analysis import array_processing
 from obspy.core.util import AttribDict
+from obspy import UTCDateTime
+from obspy.imaging.cm import obspy_sequential
 #\_____________________________________/
 #
 #\__________Scripts List__________/
@@ -30,6 +33,90 @@ AuxReset       saves result for the next cell.
 lmt_ValInd     Limits 1-D array a1 to a given value and saves the indexes to limit another 1-D array a2.
 """
 #\__________Scripts__________/
+#
+# ---------- Beamforming - FK Analysis  ----------
+def BeamFK(st, MTparam, phone_geo, **kwargs):
+
+    """ 
+    Perform FK analysis with ObsPy. The data is bandpass filtered, prewhitening disabled.
+    <Arguments>
+    st                -> A stream
+    MTparam           -> A list [fmin, fmax]
+    phone_geo         -> A list of [[phone#, lat, lon], ...]
+    stime, etime      -> Relative time limits (s) on the time window for event,
+                          later to be transformed to UTCDateTime format.
+    sll_o, sl_s       -> Slowness grid (s/km) and step fraction.
+                 slm_y +─────+
+                       │     │
+                       │     │
+                 sll_y +─────+    
+                    sll_x   slm_x
+    win_len, win_frac -> window length and step fraction (s).
+    semb_thres, vel_thres -> infinitesimally small numbers; must not be changed.
+    timestamp         -> written in 'mlabday', read directly by plotting routine.
+    """ 
+#
+#------------ Select event times --------------
+    print(f'\n>> Select start and end times (s) for beanforming')
+    print(f'  stime etime')
+    print(f'    └─────│──> Initial event time')
+    print(f'          └──> Final event time')
+    ent = input(f'   Enter t0 t1:\n')
+    if not ent: raise ValueError("t0 t1 mandatory.")
+    stime0, etime0 = np.array(ent.rstrip().split(' '), dtype=float)
+    dummy = UTCDateTime(st[0].stats.starttime)
+    stime = dummy + stime0
+    etime = dummy + etime0
+#------------ Relevant parameters --------------
+    kwargs = dict(
+# slowness grid : Xmin , Xmax , Ymin , Ymax , Slow Step
+    sll_x =-3.0, slm_x =3.0, sll_y =-3.0, slm_y =3.0, sl_s =0.03,
+# Changed for TTB 4/8/23
+#    sll_x =-5.0, slm_x =5.0, sll_y =-5.0, slm_y =5.0, sl_s =0.025,
+# sliding window properties
+    win_len =1.0, win_frac =0.1,
+# frequency properties
+    frqlow =MTparam[0], frqhigh =MTparam[1], prewhiten =0,
+# restrict output
+    semb_thres=-1.e9, vel_thres=-1.e9 , timestamp='julsec',
+    stime=stime , etime=etime
+    )
+#
+    print(f'\n>>  F-K parameters')
+    pprint.pprint(kwargs)
+#    pline(['\n>> F-K parameters.'], width=13, align='^')
+#    pline(['    1) Slowness grid (km).'], width=13, align='^')
+#    pline(['        y=['+str(kwargs.get(sll_y))+', '+str(kwargs.get(slm_y))+']'], width=6, align='^')
+#    pline(['        x=['+str(kwargs.get(sll_x))+', '+str(kwargs.get(slm_x))+']'], width=6, align='^')
+#    pline(['        Slow Step= '+str(kwargs.get(sl_s))], width=6, align='^')
+#    pline(['    2) Sliding window.'], width=13, align='^')
+#    pline(['        win_len= '+str(kwargs.get(win_len))+', win_frac'+str(kwargs.get(win_frac))], width=6, align='^')
+#-- Geophone numbering was INVERTED as for Geode headers. Sort files by phone now.
+    dummy = phone_geo
+    dummy = dummy[np.argsort(dummy[:,0])]
+    phone_geo = dummy
+#        └────> phone# (int), x, y (floats)
+
+    pprint.pprint(phone_geo)
+
+
+#
+#------------- FK processing (obspy) --------------------
+    for ind, tr in enumerate(st):
+#-- Normalize
+        tr.data = tr.data/max(tr.data)
+#------------ Geophone positions in geographic. TTB altitude: 10m
+        tr.stats.coordinates = AttribDict({
+                'latitude':  phone_geo[ind,0],
+                'elevation': float(10),
+                'longitude': phone_geo[ind,1]})
+#------------ Execute array_processing
+    out = array_processing(st, **kwargs)
+#-- return
+    return out, stime0, etime0
+#
+# -------------- End of function   ----------------------------
+#
 #
 # ---------- Filter trace  ----------
 """
@@ -71,19 +158,6 @@ def TrFlt(trZ):
         ftype, f0,     nc , zP = ent[:]
         f1 =   f0
 #
-#------- An estimate for the lowest frequency
-    fmin = 1. / (2.0 * trZ.times(type='relative')[-1])
-    fmin = fmin if ftype in ['lowpass', 'bandstop'] else f0 / 3.
-#                   A drop in amplitude of 40dB or 1% ─> +─────+
-#------- An estimate for the highest frequency
-    if ftype in ['lowpass', 'bandpass']:
-        fmax  = 3 * f1
-#               +────+─> A drop in amplitude of 40dB or 1% 
-    else:
-        ent = input(f'-Enter a safety margin for the Nyquist (dflt: 0.8):') or '0.8'
-        ent = float( ent.rstrip().split(' ')[0] )
-        fmax  = ent * 1. / (2.0 * trZ.stats.delta)
-#
 #------- Acausal filter/zero phase if zP=True, otherwise a causal filter.
     if ftype in ['bandpass', 'bandstop']:
         trZ.filter(ftype, freqmin=f0, freqmax=f1, zerophase=zP, corners=nc)
@@ -94,16 +168,8 @@ def TrFlt(trZ):
 #
     ftype = ftype+' '+dummy
 #
-    f0 = np.round(fmin, 3)
-    f1 = np.round(fmax, 3)
-    print(f">> Useful range due to {ftype} filter: {f0} to {f1}Hz.")
-    dummy = 0.8 * f1 * 2.
-    print(f"   - The maximum freq={f1}Hz requires a Nyquist of >={np.round(dummy, 3)}Hz with a 80% margin,")
-    fNy = 1. / (2.0 * trZ.stats.delta)
-    print(f"       or 1/({np.round(fNy/dummy, 0)}) of the original Nyquist.")
-#
 #------- Return filtered trace, ftype and [fmin, fmax]
-    return trZ, ftype, [fmin, fmax]
+    return trZ, ftype, [f0, f1]
 #
 # -------------- End of function   ---------------------
 #
