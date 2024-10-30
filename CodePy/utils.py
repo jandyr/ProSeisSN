@@ -119,17 +119,18 @@ def BeamFK(st, MTparam, phone_geo, **kwargs):
 Find the loss of amplitude between two trace instances and apply a gain
 tr....... Original trace (modified in place!!)
 """
-def TrFlt(trZ):
+def TrFlt(trZ, ent=None):
+#------------ Asks for input
+    if ent is None:
+        print(f"Enter the filter, lower freq., upper freq., filter order, zerophase: ftype, f0, f1, nc, zP")
+        print(f" Filter minimum options:")
+        print(f"                lp (lowpass)  -> f0         is required")
+        print(f"                hp (highpass) -> f0         is required")
+        print(f"                bp (bandpass) -> f0 and f1 are required")
+        print(f"                bs (bandstop) -> f0 and f1 are required")
+        ent = input(f' Enter ftype, f0, f1, nc and zP (dflt: Nc=4, zP=True): ')
+        ent = ent.rstrip().split(' ')
 #
-    print(f"Enter the filter, lower freq., upper freq., filter order, zerophase: ftype, f0, f1, nc, zP")
-    print(f" Filter minimum options:")
-    print(f"                lp (lowpass)  -> f0         is required")
-    print(f"                hp (highpass) -> f0         is required")
-    print(f"                bp (bandpass) -> f0 and f1 are required")
-    print(f"                bs (bandstop) -> f0 and f1 are required")
-
-    ent = input(f' Enter ftype, f0, f1, nc and zP (dflt: Nc=4, zP=True): ')
-    ent = ent.rstrip().split(' ')
     if ent[0] == 'lp' or ent[0] == 'hp':
         ent[0] = 'lowpass' if ent[0] == 'lp' else 'highpass'
         ent[1] = float(ent[1])

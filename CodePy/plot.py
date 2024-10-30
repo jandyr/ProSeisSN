@@ -1,9 +1,13 @@
 #!/usr/bin/python3
 #--------  Code Dependencies   ----------
 #\__________General Utilities____________/
+import os, sys
 import pprint
 import numpy as np
 import math
+#\__________ObsPy functions__________/
+from obspy import UTCDateTime
+from obspy.imaging.cm import obspy_sequential
 #\__________matplotlib functions__________/
 import matplotlib
 import matplotlib as mpl
@@ -65,7 +69,7 @@ def pltbaz(out, stime, etime, title='TTB'):
 #      stime.strftime('%Y-%m-%d'), ))
 #    fig.autofmt_xdate()
   ax.set_xlabel('s')
-  fig.subplots_adjust(left=0.15, top=0.95, right=0.95, bottom=0.2, hspace=0)
+  fig.subplots_adjust(left=0.15, top=0.95, right=0.95, bottom=0.2, hspace=0.5)
 #    plt.show()
 #
 # -------------- Polar plot
