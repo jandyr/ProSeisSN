@@ -36,6 +36,12 @@ This repository contains relevant material and notebooks to guide students throu
 
 - [**Unit03**](https://github.com/jandyr/ProSeisSN/tree/main/Unit03): Processing passive seismic data I
 
+- [**Unit04**](https://github.com/jandyr/ProSeisSN/tree/main/Unit04): Processing passive seismic data II
+
+- [**Unit05**](https://github.com/jandyr/ProSeisSN/tree/main/Unit05): Processing passive seismic data III
+
+- [**Unit06**](https://github.com/jandyr/ProSeisSN/tree/main/Unit06): The Network and Array Methods
+
 ---
 ##---------------------- Repository  -------------------------------
  
