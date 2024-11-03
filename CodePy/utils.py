@@ -24,9 +24,10 @@ from obspy.imaging.cm import obspy_sequential
 #
 """
 Script         Description
-
-
-
+otrstr         Preprocess the stream/trace st. Calls Proc
+ObsPyStream    Create a new stream and loop over traces. Add the location to the “header”.
+Proc           Preprocess the stream/trace st
+BeamFK         Beamforming - FK Analysis
 TrGain         apply a gain
 nearest_pow_2  Find power of two nearest to x
 AuxReset       saves result for the next cell.
@@ -34,9 +35,87 @@ lmt_ValInd     Limits 1-D array a1 to a given value and saves the indexes to lim
 """
 #\__________Scripts__________/
 #
+# ---------- Preprocess the stream/trace  ----------
+def ObsPyStream(st):
+    """ 
+    Create a new ObsPy stream 
+    <Arguments>
+    st                -> A stream
+    Returns a new st
+    """ 
+#------ Initialization
+    gather = Stream()
+    lon = 0.
+    lat = 0.
+    i   = 0
+#
+#------ Loop through traces
+    for t in st:
+        tr = Trace(data=t.data)
+        tr.stats.sampling_rate = t.stats.sampling_rate
+        tr.stats.station       = f"gloc[i,0]"                           # Assign station name   
+        tr.stats.starttime     = t.stats.starttime
+        tr.stats.network       = "TTB22"                                # Assign network code
+        tr.stats.channel       = "HHZ"                                  # Assign channel code
+        tr.stats.location      = "0"                                    # Assign location code
+        tr.stats.distance      = t.stats.seg2.RECEIVER_LOCATION         # Distance along cable
+        tr.stats.coordinates = \
+                                 AttribDict({'latitude': ttb_gloc[i,1],
+                                             'longitude': ttb_gloc[i,2],
+                                             'elevation': 10.})
+#
+        lon += ttb_gloc[i,2]
+        lat += ttb_gloc[i,1]
+        i += 1
+        gather += tr                                                      # gather.append(tr)
+#
+#------ Baricenter
+    lon /= float(i)
+    lat /= float(i)
+    print(f">> Gather baricenter is at: lat= {lat}, lon= {lon}.")
+#
+    return st
+#
+# -------------- End of function   ---------------------
+#
+def Proc(st):
+    """ 
+    Preprocess the stream/trace st
+    <Arguments>
+    st                -> A stream
+    """ 
+#------ Copy I/P stream
+    st0 = st.copy()
+#------ Remove the mean and trend
+    st.detrend("linear")
+    st.detrend("demean") 
+# 
+#------ Notch 60Hz spectral line.
+    print(f">> Notch the data at [bs 59.2, 60.8]")
+    st, ftype, flims = u.TrFlt(st, ['bs', 59.2, 60.8])
+#
+#-------- Bandpass filter the data.
+    print("\r", end="")
+    print(f">> Bandpass filter the data")
+    ent = input(f' Enter dflt [bp 5. 50.], or enter your choice: ')
+    ent = None if ent else ['bp', 5., 50.]
+    st, ftype, flims = u.TrFlt(st, ent=ent)
+#-------- Taper the data: Hanning
+    print(f'>> Taper window ends with 0.1')
+    st.taper(type = 'hann', max_percentage = 0.1)
+#---------- Amplitude loss
+    gain = np.round(np.median(env0) / np.median(env1), 0)
+    dbLoss = np.round(10.0 * np.log10( 1. / gain ), 0)
+    ent = input(f'>> Stream loss in amplitude is {dbLoss}dB. Apply a gain of {gain} (dftl = no, any I/P = yes) ')
+    gain = gain if ent else 1.
+    st.data *= gain
+#
+    return st
+#
+# -------------- End of function   ---------------------
+#
 # ---------- Beamforming - FK Analysis  ----------
 def BeamFK(st, MTparam, phone_geo, **kwargs):
-
     """ 
     Perform FK analysis with ObsPy. The data is bandpass filtered, prewhitening disabled.
     <Arguments>
@@ -114,6 +193,61 @@ def BeamFK(st, MTparam, phone_geo, **kwargs):
 # -------------- End of function   ----------------------------
 #
 #
+# ---------- Stream/Trace Pre-processing  ----------
+def otrstr(tr, MTparam, verbose=True):
+    """ 
+    Process the stream/trace tr. A simpler version of the original otrstr.
+    <Arguments>
+    tr                -> A stream or trace
+    MTparam           -> A list with I/P parameters
+     │─────>  dtr line ftype Fmin Fmax taper gain
+     │   i =   0    1    2    3    4     5     6
+     └─> dtr       -> Remove trends: 0 = no; 1 = yes  
+         line      -> Notch 60Hz:    0 = no; 1 = yes
+         ftype     -> Filter type:   lp=lowpass, hp=highpass, bp=bandpass, bs=bandstop  
+         Fmin Fmax -> Corner frequencies.
+         taper     -> Taper ends:    0 = no; 1 = yes
+         gain      -> Gain data:     0 = no; 1 = yes
+    """
+#-- Fix # of corners for filters
+    nc = 4
+#-- Copy of original trace/stream
+    tr0 = tr.copy()
+#
+#------------ Detrend
+    if MTparam[0] == int(1):
+        tr.detrend("linear")
+        tr.detrend("demean")
+        if verbose:
+            dummy = np.mean(tr0[0].data, dtype=np.float64) if hasattr(tr0, 'traces') else np.mean(tr0.data, dtype=np.float64)
+            print(f">> The mean of 1st original trace is {dummy}")
+#------------  Filter 60Hz line with fixed limits for TTB
+    if MTparam[1] == int(1):
+        dummy = ['bs', 59.2, 60.8]
+        tr, ftype, flims = TrFlt(tr, ent=dummy)
+        if verbose:
+            print(f">> Notched original trace from {dummy[1]} to {dummy[-1]}")
+#
+#------------  Filter the data.
+    ent = [MTparam[2], MTparam[3], MTparam[4]]
+    tr, ftype, flims = TrFlt(tr, ent=ent)
+    if verbose: print(f">> Useful range due to {ftype} filter: {flims[0]} to {flims[1]}Hz.")
+#
+#------------  Taper the data with 10% Hanning
+    if MTparam[5] == int(1):
+        tr.taper(type = 'hann', max_percentage = 0.1)
+#
+#------------  Gain trace
+    if MTparam[6] == int(1):
+        tr, dummy = TrGain(tr0, tr)
+        if verbose:
+            print(f">> Applyied a maximum gain of {dummy[0]}dB to compensate processing losses.")
+#
+#------------  return processed trace
+    return tr
+#
+# -------------- End of function   ---------------------
+#
 # ---------- Filter trace  ----------
 """
 Find the loss of amplitude between two trace instances and apply a gain
@@ -172,19 +306,45 @@ def TrFlt(trZ, ent=None):
 #
 # ---------- Trace gain  ----------
 """
-Find the loss of amplitude between two trace instances and apply a gain
-env0..... Original envelope
-env1..... Processed envelope
-gain.... if True apply gain
-=False
+Find the loss of amplitude between two trace instances and apply a gain.
+Use the median of the envelope.
+tr0..... Original trace
+tr1..... Processed trace
 """
-def TrGain(env0, env1):
-#---------- Amplitude loss
-    gain = np.round(np.median(env0) / np.median(env1), 0)
-    dbLoss = np.round(10.0 * np.log10( 1. / gain ), 0)
-    print(f'==> Loss in amplitude of {dbLoss}dB, requiring a gain of {gain}')
-#---------- Returns multiplicative gain
-    return gain
+def TrGain(tr0, tr1):
+#------------  Gain stream, which has attribute 'traces'
+#               => Each trace is independently gained!
+    if hasattr(tr0, 'traces'):
+        maxg = float('-inf')
+        ming = float('inf')
+#
+        for ind in range(len(tr0)):
+            gain = np.median(obspy.signal.filter.envelope(tr0[ind].data))                     # max( )
+            gain = np.round(gain/np.median(obspy.signal.filter.envelope(tr1[ind].data)),0)
+#
+            tr1[ind].data *= gain
+            maxg = np.maximum(gain, maxg)
+            ming = np.minimum(gain, ming)
+#------------  Gain trace, which has attribute 'data'
+    elif hasattr(tr0, 'data'):
+            gain = np.median(obspy.signal.filter.envelope(tr0.data))
+            gain = np.round(gain / np.median(obspy.signal.filter.envelope(tr1.data)),0)
+#
+            tr1.data *= gain
+#
+            maxg = gain; ming = gain
+#-- Sanity
+    else:
+        raise ValueError("Bad hasattr")
+#
+#---------- Amplitude gain in dB
+    maxg = np.round(10.0 * np.log10(maxg ), 0)
+    ming = np.round(10.0 * np.log10(ming ), 0)
+#
+#------------  Returns gained trace
+    return tr1, [maxg, ming]
+#
+# -------------- End of function   ----------------------------
 #
 # -------------- End of function   ---------------------
 # ---------- nearest_pow_2  ----------

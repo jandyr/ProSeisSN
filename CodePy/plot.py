@@ -149,7 +149,7 @@ def pgather(xg, yg, annotg, coord='polar', degrees=True):
 #
 # -------------- pltTrSp  ----------------------------
 """
-Plotting script for 2 1-D time series with two plots
+Plotting script for 1-D time series with two plots
 
 """
 def pltTrSp(x1, y1, x2, y2,
