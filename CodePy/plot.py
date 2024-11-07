@@ -25,10 +25,63 @@ plt.style.use('ggplot')
 #\__________Scripts List__________/
 """
 Script         Description
+
+psw            Plots results from sliding-window
 pgather        Plot gather
 pltTrSp        Plot two graphs one on the topo of the other
 gplot
+pus            A pretty useless snippet to plot a cube
 """
+#
+# ---------- Plots sliding time-window results ----------
+"""
+    Plots the results of sliding-window array processing
+    <Arguments>
+    st        -> An ObsPy Stream object: the array data
+    T         -> Times of array processing estimates (center of time windows) (s)
+    B         -> Backazimuths
+    V         -> Trace velocities (km/s)
+    C         -> Optional color of points (e.g., Semblance, F-statistic, Correlation)
+    v_max     -> Maximum trace velocity for y-axis on trace velocity
+    element   -> Name of the element to plot the time series data for
+    twin_plot -> List containing the start and end times (in seconds) to plot
+"""
+#
+def psw(st, T, B, V, C=None, v_max=5., element='BEAM', twin_plot=None):
+# New Stream object with these traces that match the given stats criteria
+    tr = st.select(station=element)[0]
+    
+    fig = plt.figure()
+    ax1 = plt.subplot(3,1,1)
+    t_tr = np.arange(0, tr.stats.npts*tr.stats.delta, tr.stats.delta)
+    plt.plot(t_tr, tr.data/np.max(np.abs(tr.data)), 'k-')
+    
+    ax2 = plt.subplot(3,1,2, sharex=ax1)
+    if C is not None:
+        plt.scatter(T, B, s=4, c=C, cmap=plt.get_cmap('hot_r'))
+    else:
+        plt.plot(T, B, 'k.')
+    ax2.set_ylim([0,360])
+    ax2.set_ylabel('Backazimuth')
+    if twin_plot is not None:
+        plt.xlim(twin_plot)
+    
+    ax3 = plt.subplot(3,1,3, sharex=ax1)
+    if C is not None:
+        plt.scatter(T, V, s=4, c=C, cmap=plt.get_cmap('hot_r'))
+    else:
+        plt.plot(T, V, 'k.')
+    ax3.set_ylim([0,v_max])
+    ax3.set_ylabel('Phase vel.')
+    ax3.set_xlabel('Time (s) after ' + str(tr.stats.starttime).split('.')[0].replace('T', ' '))
+    
+    ax1.get_yaxis().set_ticks([])
+
+    fig.subplots_adjust(left=0.15, top=0.95, right=0.95, bottom=0.2, hspace=1)
+
+    plt.show()
+#
+# -------------- End of function   ---------------------
 #
 # -------------- Plot FK O/P  -------------------
 def pltbaz(out, stime, etime, title='TTB'):
@@ -244,5 +297,38 @@ def _nearest_pow_2(x):
         return a
     else:
         return b
+#
+# -------------- End of function   ---------------------
+#
+# -------------- nearest_pow_2(x)  -------------------
+def pus():
+    """
+    A pretty useless snippet to plot a cube
+    
+    """
+    dx = 1
+    dy = 1
+    dz = 1
+    xs = np.arange(-40,41,dx)
+    ys = np.arange(-40,41,dy)
+    zs = np.arange(0,20,dz)
+    nx = len(xs)
+    ny = len(ys)
+    nz = len(zs)
+    print("Total number of nodes are: ",)  # For students, fill in the blank
+    fig = plt.figure(figsize=(6,6))
+    ax = plt.axes(projection='3d')
+    nodes = []
+    for x in xs[:-1]:
+        for y in ys[:-1]:
+            for z in zs[:-1]:
+                nodes.append([x,y,z])
+    nodes = np.array(nodes)
+    ax.scatter3D(nodes[:,0],nodes[:,1],nodes[:,2],c=nodes[:,2],s=0.1)
+    ax.set_xlabel("X (km)")
+    ax.set_ylabel("Y (km)")
+    ax.set_zlabel("Dep (km)")
+    ax.set_zlim([20,0])
+    plt.show()
 #
 # -------------- End of function   ---------------------
