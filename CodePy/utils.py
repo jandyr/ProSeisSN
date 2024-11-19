@@ -31,6 +31,8 @@ import plot as p
 """
 Script         Description
 
+
+
 sldtw_fk       FK analysis
 array_lsq      Pairwise cross-correlation and least-squares inversion
 sldtw          sliding time-window porcessing array
@@ -48,6 +50,13 @@ lmt_ValInd     Limits 1-D array a1 to a given value and saves the indexes to lim
 """
 #\__________Scripts__________/
 #
+
+
+
+
+
+
+
 # ---------- FK analysis ----------
 """ 
     FK analysis with ObsPy. The data is bandpass filtered, prewhitening disabled.
@@ -62,11 +71,11 @@ lmt_ValInd     Limits 1-D array a1 to a given value and saves the indexes to lim
                        │     │
                  sll_y +─────+    
                     sll_x   slm_x
-    win_len, win_frac -> window length and step fraction (s).
+    win_len, win_frac -> window length and the overlap fraction (s).
     semb_thres, vel_thres -> infinitesimally small numbers; must not be changed.
     timestamp         -> written in 'mlabday', read directly by plotting routine.
 """ 
-def sldtw_fk(st, tstart, tend, MTparam, **kwargs):
+def sldtw_fk_0(st, tstart, tend, MTparam, **kwargs):
 #
 #------ Coordinates
     for st_i in st:
@@ -342,7 +351,7 @@ def cat_wfrm(trZ, cat, tname, phone):
         pck0 = trTplt.stats.starttime + float(ent[0])
         pck1 = trTplt.stats.starttime + float(ent[1])
 #------ Trim the template
-        trTplt.trim(pck0, pck1)
+        trTplt.slice(pck0, pck1)
         print(f">> Template is at [{pck0}, {pck1}] with {len(trTplt)} data points.")
 #------ Relative time: nummpy array
         dummy = trTplt.times(type="relative")        
