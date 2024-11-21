@@ -75,7 +75,7 @@ lmt_ValInd     Limits 1-D array a1 to a given value and saves the indexes to lim
     semb_thres, vel_thres -> infinitesimally small numbers; must not be changed.
     timestamp         -> written in 'mlabday', read directly by plotting routine.
 """ 
-def sldtw_fk_0(st, tstart, tend, MTparam, **kwargs):
+def sldtw_fk(st, tstart, tend, MTparam, **kwargs):
 #
 #------ Coordinates
     for st_i in st:

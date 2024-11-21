@@ -26,12 +26,72 @@ plt.style.use('ggplot')
 """
 Script         Description
 
+par            Plots array response
 psw            Plots results from sliding-window
 pgather        Plot gather
 pltTrSp        Plot two graphs one on the topo of the other
 gplot
 pus            A pretty useless snippet to plot a cube
 """
+#
+# ---------- Plots array response within a range ----------
+"""
+    Plots array response
+    <Arguments>
+    st          -> An ObsPy Stream object: the array data
+    slim        -> Slowness maximum(s/km)
+    R           -> Array response
+    geo         -> Geometry from ObsPy
+    v_P,v_Sv_W  -> Seis vels: P, S/Ray waves, w= water
+                    Max vel for rocks (Rayleigh=S)
+                    Med      v_P    v_S (km/s)
+                    Air      0.34   None
+                    Water    1.5    None
+                    Ice      3.8    1.8
+                    Dry Sand 1      0.5
+                    Wet Sand 2.5    0.8
+                    rock     6      3
+"""
+#
+def par(st, slim, R, geo, v_P = 2.5, v_S = 0.8, v_W = 1.5):
+    fig, ax = plt.subplots(1, 2, figsize=(7,3), constrained_layout=True)
+
+    # Array layout
+    i = 0
+#    geo = get_geometry(st, coordsys='lonlat', return_center=False, verbose=False)
+    ax[i].plot(geo[:,0], geo[:,1], '^', color='red', markeredgecolor='black')
+    ax[i].set_xlabel('x-coordinate [km]')
+    ax[i].set_ylabel('y-coordinate [km]')
+    ax[i].set_title(f'Array layout')
+
+    # Response function
+    i += 1
+    extent=[-slim, slim, -slim, slim]
+    im = ax[i].imshow(R, extent=extent, origin='lower',
+                      vmin=0.2, vmax=1.0, cmap='inferno_r',
+                      aspect='auto')
+    ax[i].set_xlabel('x-slowness [s/km]')
+    ax[i].set_ylabel('y-slowness [s/km]')
+
+    # Plot slownesses circles for diverse wave classes
+    angles = np.deg2rad(np.arange(0., 360, 1.))
+    slowness = dict(v_P=v_P, v_R=v_S,v_W=v_W)
+    for (key, radius) in slowness.items():
+        x_circle = np.sin(angles)/radius
+        y_circle = np.cos(angles)/radius
+        ax[i].plot(x_circle, y_circle, linestyle='solid', label=key, alpha=0.6)
+    ax[i].legend()
+    ax[i].set_title('Array response')
+        
+    plt.colorbar(im, ax=ax[i], label='Normalized reponse')
+
+    plt.show()
+
+#    fid = f'{network}.{array}.{pt0:%Y%m%d-%H%M}.array_response.pdf'
+#    fig.savefig(fid, dpi=300, facecolor='white', bbox_inches='tight')
+    plt.show()
+#
+# -------------- End of function   ---------------------
 #
 # ---------- Plots sliding time-window results ----------
 """
