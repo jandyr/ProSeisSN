@@ -26,12 +26,10 @@ dependencies:
   - pyproj
   - ipython
   - notebook
-
+  - scikit-learn
   
-
   #--- Repos  ---#
   # Check conda packages -> https://conda-forge.org/packages/
-  #  - scikit-learn
   #  - numba
   #  - pandas
   #  - pip
