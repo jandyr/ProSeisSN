@@ -23,10 +23,15 @@ dependencies:
   - netcdf4
   - pyrocko::pyrocko
   - collections-extended
+  - pyproj
+  - ipython
+  - notebook
+
+  
 
   #--- Repos  ---#
   # Check conda packages -> https://conda-forge.org/packages/
-  
+  #  - scikit-learn
   #  - numba
   #  - pandas
   #  - pip
