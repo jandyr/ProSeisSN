@@ -84,9 +84,6 @@ def par(st, slim, R, geo, v_P = 2.5, v_S = 0.8, v_W = 1.5):
     ax[i].set_title('Array response')
         
     plt.colorbar(im, ax=ax[i], label='Normalized reponse')
-
-    plt.show()
-
 #    fid = f'{network}.{array}.{pt0:%Y%m%d-%H%M}.array_response.pdf'
 #    fig.savefig(fid, dpi=300, facecolor='white', bbox_inches='tight')
     plt.show()
@@ -107,14 +104,17 @@ def par(st, slim, R, geo, v_P = 2.5, v_S = 0.8, v_W = 1.5):
     twin_plot -> List containing the start and end times (in seconds) to plot
 """
 #
-def psw(st, T, B, V, C=None, v_max=5., element='BEAM', twin_plot=None):
-# New Stream object with these traces that match the given stats criteria
-    tr = st.select(station=element)[0]
-    
+def psw(st, T, B, V, C=None, v_max=5., twin_plot=None):
+# -------------- Get info from a random trace
+    dummy = np.random.randint(1, len(st))
+    tr = st[dummy - 1]
+    t_tr = tr.times(type="relative")
+#    t_tr = np.arange(0, tr.stats.npts*tr.stats.delta, tr.stats.delta)
+
     fig = plt.figure()
     ax1 = plt.subplot(3,1,1)
-    t_tr = np.arange(0, tr.stats.npts*tr.stats.delta, tr.stats.delta)
-    plt.plot(t_tr, tr.data/np.max(np.abs(tr.data)), 'k-')
+    
+    plt.plot(t_tr, tr.data/np.max(np.abs(tr.data)), 'k-', label=str(dummy))
     
     ax2 = plt.subplot(3,1,2, sharex=ax1)
     if C is not None:
@@ -144,16 +144,16 @@ def psw(st, T, B, V, C=None, v_max=5., element='BEAM', twin_plot=None):
 # -------------- End of function   ---------------------
 #
 # -------------- Plot FK O/P  -------------------
+"""
+    Plots the results of sliding-window array processing
+    <Arguments>
+
+"""
 def pltbaz(out, stime, etime, title='TTB'):
-  """ 
-  Plot
-  """
 # -------------- Warning on plots
   sys.stdout.write('\n')
-  print(f'\n>> Warning: pltbaz works with VAGAROSITY.')
-  sys.stdout.write('\n')
 # -------------- Plot graphs
-  labels = ['rel.power', 'abs.power', 'baz', 'slow']
+  labels = ['semblance', 'abs.power', 'baz', 'slow']
 #    xlocator = mdates.AutoDateLocator()
   fig = plt.figure()
   for i, lab in enumerate(labels):
@@ -162,15 +162,13 @@ def pltbaz(out, stime, etime, title='TTB'):
 #      val = 1./ out[:, i + 1] if lab == 'vel' else out[:, i + 1]
 #-- Change x-coord
       dummy = out[-1, 0] - out[0, 0]
-      dummy = np.linspace(stime, etime,
-                          num=len(out))
+      dummy = np.linspace(stime, etime, num=len(out))
       out[:, 0] = dummy.copy()
       ax.scatter(out[:, 0], out[:, i + 1], c=out[:, 1], alpha=0.6,
                  edgecolors='none', cmap=obspy_sequential)
 #-- Axis limits
       ax.set_ylabel(lab)
       if lab == 'baz':
-#        baz[baz < 0.0] += 360                 #backazimuth to values between 0 and 360
         ax.set_ylim(-180,180)
       else:
         ax.set_ylim(out[:, i + 1].min(), out[:, i + 1 ].max())

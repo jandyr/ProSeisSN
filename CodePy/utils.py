@@ -450,14 +450,14 @@ def Proc(st):
 # 
 #------ Notch 60Hz spectral line.
     print(f">> Notch the data at [bs 59.2, 60.8]")
-    st, ftype, flims = u.TrFlt(st, ['bs', 59.2, 60.8])
+    st, ftype, flims = TrFlt(st, ['bs', 59.2, 60.8])
 #
 #-------- Bandpass filter the data.
     print("\r", end="")
     print(f">> Bandpass filter the data")
     ent = input(f' Enter dflt [bp 5. 50.], or enter your choice: ')
     ent = None if ent else ['bp', 5., 50.]
-    st, ftype, flims = u.TrFlt(st, ent=ent)
+    st, ftype, flims = TrFlt(st, ent=ent)
 #-------- Taper the data: Hanning
     print(f'>> Taper window ends with 0.1')
     st.taper(type = 'hann', max_percentage = 0.1)
@@ -552,7 +552,7 @@ def BeamFK(st, MTparam, phone_geo, **kwargs):
 #
 #
 # ---------- Stream/Trace Pre-processing  ----------
-def otrstr(tr, MTparam, verbose=True):
+def otrstr(tr0, MTparam, verbose=True):
     """ 
     Process the stream/trace tr. A simpler version of the original otrstr.
     <Arguments>
@@ -570,7 +570,7 @@ def otrstr(tr, MTparam, verbose=True):
 #-- Fix # of corners for filters
     nc = 4
 #-- Copy of original trace/stream
-    tr0 = tr.copy()
+    tr = tr0.copy()
 #
 #------------ Detrend
     if MTparam[0] == int(1):
@@ -597,7 +597,7 @@ def otrstr(tr, MTparam, verbose=True):
 #
 #------------  Gain trace
     if MTparam[6] == int(1):
-        tr, dummy = TrGain(tr0, tr)
+        tr, dummy = TrGain(tr, tr0)
         if verbose:
             print(f">> Applyied a maximum gain of {dummy[0]}dB to compensate processing losses.")
 #
