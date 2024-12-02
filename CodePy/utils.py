@@ -31,8 +31,9 @@ import plot as p
 """
 Script         Description
 
-
-
+divisors       Divisors  with zero reminder
+get_coords     Retrieves coordinates
+whiten         Spectral whitening
 sldtw_fk       FK analysis
 array_lsq      Pairwise cross-correlation and least-squares inversion
 sldtw          sliding time-window porcessing array
@@ -50,13 +51,188 @@ lmt_ValInd     Limits 1-D array a1 to a given value and saves the indexes to lim
 """
 #\__________Scripts__________/
 #
+# ---------- Temporal normalization ----------
+"""
+Temporal normalization the traces. Traces must be already demeaned, detrended and filtered.
 
+    <Methods>
+    1) "clipping"
+        The signal is clipped to ->  clip_factor * sdev
+    2) "clipping_iter"
+        The signal is clipped iteratively based on clip_factor. Hint: clip_factor = 6
 
+         values above 'clip_factor * std' 
+        are divided by 'clip_weight'. until the whole signal is below 
+        'clip_factor * std'
+        clip_factor recommended: 6 (times std)
 
+    3) "ramn"
+        Running absolute mean normalization: a sliding window runs along the 
+        signal. The values within the window are used to calculate a 
+        weighting factor, and the center of the window is scaled by this 
+        factor. 
+            weight factor: w = np.mean(np.abs(tr.data[win]))/(2. * norm_win + 1) 
+        finally, the signal is tapered with a tukey window (alpha = 0.2).
 
+        norm_win: running window length, in seconds.
+          recommended: half the longest period
 
+    4) "1bit"
+        Rtains only the sign of the signal.
 
+    <Args>
+    tr          -> A trace.
+    clip_factor -> A multiplicative factor to the standard deviation (sdev). Hint: 6
+                                    = clip_factor * sdev
+    clip_weight -> A multiplicative factor to the standard deviation (sdev). Hint: 10
+                                    = clip_factor * sdev
+    norm_win    -> Running window length (s). Hint: half the longest period
+  <Returns>
+    tr: Normalized trace
+"""
+#
+def normalize(tr, clip_factor=6, clip_weight=10, norm_win=None, norm_method="1bit"): 
+#
+    if norm_method == 'clipping':
+        lim = clip_factor * np.std(tr.data)
+        tr.data[tr.data > lim] = lim
+        tr.data[tr.data < -lim] = -lim
 
+    elif norm_method == "clipping_iter":
+        lim = clip_factor * np.std(np.abs(tr.data))
+        
+        # as long as still values left above the waterlevel, clip_weight
+        while tr.data[np.abs(tr.data) > lim] != []:
+            tr.data[tr.data > lim] /= clip_weight
+            tr.data[tr.data < -lim] /= clip_weight
+
+    elif norm_method == 'ramn':
+        lwin = tr.stats.sampling_rate * norm_win
+        st = 0                                               # starting point
+        N = lwin                                             # ending point
+
+        while N < tr.stats.npts:
+            win = tr.data[st:N]
+
+            w = np.mean(np.abs(win)) / (2. * lwin + 1)
+            
+            # weight center of window
+            tr.data[st + lwin / 2] /= w
+
+            # shift window
+            st += 1
+            N += 1
+
+        # taper edges
+        taper = get_window(tr.stats.npts)
+        tr.data *= taper
+
+    elif norm_method == "1bit":
+        tr.data = np.sign(tr.data)
+        tr.data = np.float32(tr.data)
+
+    return tr
+#
+# -------------- End of function   ---------------------
+#
+# ---------- Spectral whitening ----------
+"""
+  <Args>
+    tr: A trace.
+    freqmin
+    freqmax
+  <Returns>
+    tr: whitened trace
+"""
+def whiten(tr, freqmin, freqmax):
+#
+    nsamp = tr.stats.sampling_rate
+    
+    n = len(tr.data)
+    if n == 1:
+        return tr
+    else: 
+        frange = float(freqmax) - float(freqmin)
+        nsmo = int(np.fix(min(0.01, 0.5 * (frange)) * float(n) / nsamp))
+        f = np.arange(n) * nsamp / (n - 1.)
+        JJ = ((f > float(freqmin)) & (f<float(freqmax))).nonzero()[0]
+            
+        # signal FFT
+        FFTs = np.fft.fft(tr.data)
+        FFTsW = np.zeros(n) + 1j * np.zeros(n)
+
+        # Apodization to the left with cos^2 (to smooth the discontinuities)
+        smo1 = (np.cos(np.linspace(np.pi / 2, np.pi, nsmo+1))**2)
+        FFTsW[JJ[0]:JJ[0]+nsmo+1] = smo1 * np.exp(1j * np.angle(FFTs[JJ[0]:JJ[0]+nsmo+1]))
+
+        # boxcar
+        FFTsW[JJ[0]+nsmo+1:JJ[-1]-nsmo] = np.ones(len(JJ) - 2 * (nsmo+1))\
+        * np.exp(1j * np.angle(FFTs[JJ[0]+nsmo+1:JJ[-1]-nsmo]))
+
+        # Apodization to the right with cos^2 (to smooth the discontinuities)
+        smo2 = (np.cos(np.linspace(0., np.pi/2., nsmo+1.))**2.)
+        espo = np.exp(1j * np.angle(FFTs[JJ[-1]-nsmo:JJ[-1]+1]))
+        FFTsW[JJ[-1]-nsmo:JJ[-1]+1] = smo2 * espo
+
+        whitedata = 2. * np.fft.ifft(FFTsW).real
+        
+        tr.data = np.require(whitedata, dtype="float32")
+
+        return tr
+#
+# -------------- End of function   ---------------------
+#
+# ---------- get_coords ----------
+"""
+  Retrieves the coordinates (X, Y) of a point with a given index from a 3-column matrix.
+  <Args>
+    matrix: A NumPy array representing the 3-column matrix (index, X, Y).
+    index: The integer index of the point to find.
+  <Returns>
+    A tuple (X, Y) representing the coordinates of the point.
+  <Raises>
+    ValueError: If the index is not found in the matrix.
+"""
+#
+def get_coords(matrix, index):
+#
+  # Find the row corresponding to the given index
+  row_index = np.where(matrix[:, 0] == index)
+
+  if row_index[0].size == 0 :
+    raise ValueError(f"Index {index} not found in the matrix.")
+  
+  #--- Extract X and Y coordinates
+  x = matrix[row_index[0][0], 1]
+  y = matrix[row_index[0][0], 2]
+
+  return (x, y)
+#
+# -------------- End of function   ---------------------
+#
+# ---------- divisors ----------
+"""
+  Finds all divisors of a given number with zero reminder
+  <Args>
+    num:   The number for which to find divisors
+    thres: A cap on the divisors
+  <Returns>
+    A list of integers
+"""
+#
+def divisors(num, thres):
+  div = []
+  for i in range(1, num + 1):
+    if num % i == 0:
+      div.append(i)
+  div =  div[1:-2] if len(div) >= 3 else None
+#--- Limits list values
+  if div is not None:
+      div =  [div for div in div if div >= thres]
+  return div
+#
+# -------------- End of function   ---------------------
+#
 # ---------- FK analysis ----------
 """ 
     FK analysis with ObsPy. The data is bandpass filtered, prewhitening disabled.
