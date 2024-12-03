@@ -1,7 +1,7 @@
 name: ProSeisSN
 channels:
-  - defaults
   - conda-forge
+  - defaults
   - pip
 dependencies:
   - python
@@ -29,6 +29,11 @@ dependencies:
   - notebook
   - scikit-learn
   - pywavelets
+  - pyasdf
+  
+  
+  
+  
   #--- Repos  ---#
   # Check conda packages -> https://conda-forge.org/packages/
   #  - numba
