@@ -23,6 +23,7 @@ from obspy.signal.array_analysis import array_processing
 from obspy.core.util import AttribDict
 from obspy import UTCDateTime
 from obspy.imaging.cm import obspy_sequential
+from obspy.core.util.base import _get_function_from_entry_point
 #\__________Local___________________/
 import plot as p
 #
@@ -31,6 +32,7 @@ import plot as p
 """
 Script         Description
 
+pairs          Pairwise distances between points
 divisors       Divisors  with zero reminder
 get_coords     Retrieves coordinates
 whiten         Spectral whitening
@@ -50,6 +52,72 @@ AuxReset       saves result for the next cell.
 lmt_ValInd     Limits 1-D array a1 to a given value and saves the indexes to limit another 1-D array a2.
 """
 #\__________Scripts__________/
+
+
+
+
+#
+# ---------- Pairwise distances between points ----------
+"""
+  <Args>
+    matrix -> A 3-column matrix: [[phone, x, y], ...] (x, y = cartesian coordinates)
+    ainc   -> An angle increment
+  <Returns>
+    maxdist -> A 4-column matrix: [[phone1, phone2, dist,  angle], ...]
+                                      int     int   float  float
+                    angle -> (degrees) polar angle
+                    dist  -> distance between phone1 and phone2)
+                    maxdist is filtered by the largest distance near a given angle
+
+"""
+def pairs(matrix, angle_increment):
+#
+#------  Convert to numpy array if necessary
+    if not isinstance(matrix, np.ndarray):
+        matrix = np.array(matrix)
+#
+#------  Calculate the baricenter
+    baricenter_x = np.mean(matrix[:, 1])
+    baricenter_y = np.mean(matrix[:, 2])
+#
+#------ Create an empty list to store results
+    results = []
+#
+#------ Iterate through angles 
+    for angle in range(0, 180, angle_increment):
+      # Convert angle to radians
+        rad = np.radians(angle)
+        # Define the diameter
+        diameter_slope = np.tan(rad)
+#
+#------  Find the pair of points with minimum distance from the current diameter
+        min_distance = float('inf')
+        point1_index = -1
+        point2_index = -1
+        for i in range(len(matrix)):
+            for j in range(i + 1, len(matrix)):
+                # Calculate distance from the line
+                dist_i = abs((matrix[i, 2] - baricenter_y) - diameter_slope * (matrix[i, 1] - baricenter_x)) / (np.sqrt(1 + diameter_slope**2))
+                dist_j = abs((matrix[j, 2] - baricenter_y) - diameter_slope * (matrix[j, 1] - baricenter_x)) / (np.sqrt(1 + diameter_slope**2))
+                total_dist = dist_i + dist_j
+
+                if total_dist < min_distance:
+                    
+                   # print(point1_index,point2_index,total_dist,min_distance)
+                    
+                    min_distance = total_dist
+                    point1_index = int(matrix[i,0])
+                    point2_index = int(matrix[j,0])
+#
+#------ Calculate distance between the selected pair
+        distance = np.sqrt((matrix[int(np.where(matrix[:,0] == point1_index)[0]), 1] - matrix[int(np.where(matrix[:,0] == point2_index)[0]), 1])**2 + (matrix[int(np.where(matrix[:,0] == point1_index)[0]), 2] - matrix[int(np.where(matrix[:,0] == point2_index)[0]), 2])**2)
+#
+#------ Angle relative to vertical axis
+        results.append([int(point1_index), int(point2_index), distance, angle])  #90. - angle
+    return np.array(results, dtype=object)
+#
+# -------------- End of function   ---------------------
+
 #
 # ---------- Temporal normalization ----------
 """
@@ -132,53 +200,6 @@ def normalize(tr, clip_factor=6, clip_weight=10, norm_win=None, norm_method="1bi
         tr.data = np.float32(tr.data)
 
     return tr
-#
-# -------------- End of function   ---------------------
-#
-# ---------- Spectral whitening ----------
-"""
-  <Args>
-    tr: A trace.
-    freqmin
-    freqmax
-  <Returns>
-    tr: whitened trace
-"""
-def whiten(tr, freqmin, freqmax):
-#
-    nsamp = tr.stats.sampling_rate
-    
-    n = len(tr.data)
-    if n == 1:
-        return tr
-    else: 
-        frange = float(freqmax) - float(freqmin)
-        nsmo = int(np.fix(min(0.01, 0.5 * (frange)) * float(n) / nsamp))
-        f = np.arange(n) * nsamp / (n - 1.)
-        JJ = ((f > float(freqmin)) & (f<float(freqmax))).nonzero()[0]
-            
-        # signal FFT
-        FFTs = np.fft.fft(tr.data)
-        FFTsW = np.zeros(n) + 1j * np.zeros(n)
-
-        # Apodization to the left with cos^2 (to smooth the discontinuities)
-        smo1 = (np.cos(np.linspace(np.pi / 2, np.pi, nsmo+1))**2)
-        FFTsW[JJ[0]:JJ[0]+nsmo+1] = smo1 * np.exp(1j * np.angle(FFTs[JJ[0]:JJ[0]+nsmo+1]))
-
-        # boxcar
-        FFTsW[JJ[0]+nsmo+1:JJ[-1]-nsmo] = np.ones(len(JJ) - 2 * (nsmo+1))\
-        * np.exp(1j * np.angle(FFTs[JJ[0]+nsmo+1:JJ[-1]-nsmo]))
-
-        # Apodization to the right with cos^2 (to smooth the discontinuities)
-        smo2 = (np.cos(np.linspace(0., np.pi/2., nsmo+1.))**2.)
-        espo = np.exp(1j * np.angle(FFTs[JJ[-1]-nsmo:JJ[-1]+1]))
-        FFTsW[JJ[-1]-nsmo:JJ[-1]+1] = smo2 * espo
-
-        whitedata = 2. * np.fft.ifft(FFTsW).real
-        
-        tr.data = np.require(whitedata, dtype="float32")
-
-        return tr
 #
 # -------------- End of function   ---------------------
 #

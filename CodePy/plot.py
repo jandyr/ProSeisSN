@@ -231,7 +231,7 @@ def pltbaz(out, stime, etime, title='TTB'):
 #
 # -------------- End of function   ---------------------
 #
-#-------------- Plot gather Program --------------
+#-------------- Plot gather --------------
 def pgather(xg, yg, annotg, coord='polar', degrees=True):
   """
   Program to plot Gather.
@@ -301,7 +301,7 @@ def gplot(t, tr0, tr1=None, clr0 = 'k', clr1 = 'r', trlog=False, xlbl=None, ylbl
     if tr1 is not None: ax.plot(t, tr1, clr1, alpha=0.7)
     if xlbl: ax.set_xlabel(xlbl)
     if ylbl: ax.set_ylabel(ylbl)
-    if ylbl: ax.set_yscale('log')
+    if trlog: ax.set_yscale('log')
     if title: ax.suptitle(title)
     ax.grid(True)
     plt.show()
