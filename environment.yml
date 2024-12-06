@@ -28,11 +28,9 @@ dependencies:
   - ipython
   - notebook
   - scikit-learn
-  - pywavelets
   - pyasdf
-  
-  
-  
+  - pip:
+    - pycwt
   
   #--- Repos  ---#
   # Check conda packages -> https://conda-forge.org/packages/
@@ -48,3 +46,4 @@ dependencies:
   #  - pygmt
   #  - mpi4py=3.0.1
   #  - pyasdf
+
