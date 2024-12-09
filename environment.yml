@@ -29,8 +29,10 @@ dependencies:
   - notebook
   - scikit-learn
   - pyasdf
-  - pip:
-    - pycwt
+  - pytorch
+  - nvidia
+  - numba
+  - pandas
   
   #--- Repos  ---#
   # Check conda packages -> https://conda-forge.org/packages/
