@@ -28,11 +28,13 @@ dependencies:
   - ipython
   - notebook
   - scikit-learn
+  - scikit-image
   - pyasdf
   - pytorch
   - nvidia
   - numba
   - pandas
+  - pylops>=2.0.0
   
   #--- Repos  ---#
   # Check conda packages -> https://conda-forge.org/packages/
