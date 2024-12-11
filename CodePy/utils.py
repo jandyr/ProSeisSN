@@ -12,6 +12,7 @@ from numpy.linalg import inv
 from scipy import fftpack
 from scipy import signal
 from scipy.signal import find_peaks, peak_widths
+from scipy.fftpack import fft,ifft,next_fast_len
 import scipy.fft
 import warnings, utm
 warnings.filterwarnings("ignore")
@@ -24,6 +25,7 @@ from obspy.core.util import AttribDict
 from obspy import UTCDateTime
 from obspy.imaging.cm import obspy_sequential
 from obspy.core.util.base import _get_function_from_entry_point
+from obspy.signal.util import next_pow_2
 #\__________Local___________________/
 import plot as p
 #
@@ -32,29 +34,32 @@ import plot as p
 """
 Script         Description
 
-pairs          Pairwise distances between points
-divisors       Divisors  with zero reminder
-get_coords     Retrieves coordinates
-whiten         Spectral whitening
-sldtw_fk       FK analysis
-array_lsq      Pairwise cross-correlation and least-squares inversion
-sldtw          sliding time-window porcessing array
-creastrm       Create a new stream
-cat_wfrm       Constructs a waveform catalog
-RGloc          Read a cvs file
-otrstr         Preprocess the stream/trace st. Calls Proc
-ObsPyStream    Create a new stream and loop over traces. Add the location to the “header”.
-Proc           Preprocess the stream/trace st
-BeamFK         Beamforming - FK Analysis
-TrGain         apply a gain
-nearest_pow_2  Find power of two nearest to x
-AuxReset       saves result for the next cell.
-lmt_ValInd     Limits 1-D array a1 to a given value and saves the indexes to limit another 1-D array a2.
+pairs              Pairwise distances between points
+divisors           Divisors  with zero reminder
+get_coords         Retrieves coordinates
+cut_trace           Cuts data into time segments
+taper               Applies taper to time segments
+whiten              Spectral spectral normalization and whitening
+noise_processing    Wrapper for spectral normalization and whitening
+moving_ave          Running smooth average
+correlate           Does the cross-correlation in freq domain
+extract_dispersion  Takes the dispersion image from CWT as input
+sldtw_fk            FK analysis
+array_lsq           Pairwise cross-correlation and least-squares inversion
+sldtw               sliding time-window porcessing array
+creastrm            Create a new stream
+cat_wfrm            Constructs a waveform catalog
+RGloc               Read a cvs file
+otrstr              Preprocess the stream/trace st. Calls Proc
+ObsPyStream         Create a new stream and loop over traces. Add the location to the “header”.
+Proc                Preprocess the stream/trace st
+BeamFK              Beamforming - FK Analysis
+TrGain              apply a gain
+nearest_pow_2       Find power of two nearest to x
+AuxReset            saves result for the next cell.
+lmt_ValInd          Limits 1-D array a1 to a given value and saves the indexes to limit another 1-D array a2.
 """
 #\__________Scripts__________/
-
-
-
 
 #
 # ---------- Pairwise distances between points ----------
@@ -251,6 +256,492 @@ def divisors(num, thres):
   if div is not None:
       div =  [div for div in div if div >= thres]
   return div
+#
+# -------------- End of function   ---------------------
+#
+# ---------- Cuts data into time segments ----------
+"""
+Cuts continous noise data into user-defined segments, estimate statistics for each segment and keep timestamps for later use.
+  <Args>
+    tr        -> A trace, an 1-dimensional timeseries array
+    step      -> % overlapping (0, 1) between two sliding windows
+    cc_len    -> Segment length (sec) to cut trace data
+  <Returns>
+    trace_stdS: standard deviation of the noise amplitude of each segment
+    trace_madS: mad of the noise amplitude of each segment
+    dataS_t:    timestamps of each segment
+    dataS:      2D matrix of the segmented data
+"""
+def cut_trace(tr, cc_len, step):
+#
+#------ Trace stats and initialize return variables
+#--- sampling_rate
+    sps       = int(tr.stats.sampling_rate)
+#--- trace window length (sec)
+    tw        = round(tr.stats.endtime - tr.stats.starttime, 0)
+#--- Date and time of the first data sample given in UTC (default value is “1970-01-01T00:00:00.0Z”)
+    starttime = tr.stats.starttime - obspy.UTCDateTime(1970,1,1)
+#--- Overlap in sec
+    step = cc_len * step
+#--- Number of segments and of points in each segment
+    nseg      = int(np.floor((tw - cc_len)/step))    #tw/24*86400-cc_len
+    npts = int(cc_len * sps)
+#--- Copy data into array and check if data is shorter than the trim
+    data      = tr.data
+    if data.size < sps * nseg: raise ValueError("cc_len must be << trace.")
+#--- Overlapping (sec) between two sliding windows
+    step      = np.ceil(cc_len * step).astype(int)
+#
+#------ initialize variables
+    dataS_t = []; dataS = []
+#--- Relevant arrays
+    dataS      = np.zeros(shape=(nseg, npts),dtype=np.float32)
+    trace_madS = np.zeros(nseg,dtype=np.float32)
+    trace_stdS = np.zeros(nseg,dtype=np.float32)
+    trace_madS = np.zeros(nseg,dtype=np.float32)
+    dataS_t    = np.zeros(nseg,dtype=np.float32)
+#
+#------ Statistic to detect segments that may be associated with a given event
+#--- median absolute deviation over all trace
+    all_madS = np.median(np.absolute(data - np.median(data)))
+#--- standard deviation over all noise window
+    all_stdS = np.std(data)
+    if all_madS==0 or all_stdS==0 or np.isnan(all_madS) or np.isnan(all_stdS):
+        print("Warn: madS or stdS == 0 for %s" % tr)
+        return None, dataS_t, dataS
+#
+
+#    tw, cc_len, step 60.0 3.0 1.5
+#    data.size, sps, nseg, npts 3000 50 38 150
+    print('tw, cc_len, step', tw, cc_len, step)
+    
+    indx1 = 0
+    for iseg in range(nseg):
+        indx2 = indx1+npts
+
+        
+        print('data, iseg, indx1,indx2', data[indx1:indx2].size, iseg, indx1, indx2)
+
+        
+        dataS[iseg, :] = data[indx1:indx2]
+        trace_madS[iseg] = (np.max(np.abs(dataS[iseg]))/all_madS)
+        trace_stdS[iseg] = (np.max(np.abs(dataS[iseg]))/all_stdS)
+        dataS_t[iseg]    = starttime+step*iseg
+        indx1 = indx1+step*sps
+#
+#------ Data conditioning. It is assumed data is already demeaned and detrended
+    dataS = taper(dataS)
+#
+#------  Returns
+    return trace_stdS, trace_madS, dataS_t, dataS
+#
+# -------------- End of function   ---------------------
+#
+# ---------- Applies taper to time segments ----------
+"""
+Applies a cosine taper using obspy functions
+  <Args>
+    data -> An input data matrix
+  <Returns>
+    data -> A tapered data matrix
+"""
+def taper(data):
+#ndata = np.zeros(shape=data.shape,dtype=data.dtype)
+    if data.ndim == 1:
+        npts = data.shape[0]
+        # window length
+        if npts*0.05>20:wlen = 20
+        else:wlen = npts*0.05
+        # taper values
+        func = _get_function_from_entry_point('taper', 'hann')
+        if 2*wlen == npts:
+            taper_sides = func(2*wlen)
+        else:
+            taper_sides = func(2*wlen+1)
+        # taper window
+        win  = np.hstack((taper_sides[:wlen], np.ones(npts-2*wlen),taper_sides[len(taper_sides) - wlen:]))
+        data *= win
+    elif data.ndim == 2:
+        npts = data.shape[1]
+        # window length
+        if npts*0.05>20:wlen = 20
+        else:wlen = npts*0.05
+        # taper values
+        func = _get_function_from_entry_point('taper', 'hann')
+        if 2*wlen == npts:
+            taper_sides = func(2*wlen)
+        else:
+            taper_sides = func(2*wlen + 1)
+        # taper window
+        win  = np.hstack((taper_sides[:wlen], np.ones(npts-2*wlen),taper_sides[len(taper_sides) - wlen:]))
+        for ii in range(data.shape[0]):
+            data[ii] *= win
+#
+#------  Returns
+    return data
+#
+# -------------- End of function   ---------------------
+#
+# ---------- Spectral spectral normalization and whitening ----------
+"""
+Transforms to frequency domain, whitens the amplitude spectrum in the frequency domain between *freqmin* and *freqmax*,
+ and returns the whitened fft.
+  <Args>
+    tr: A trace: 1-dimensional timeseries array
+    dt: The sampling space of the `data`
+    freqmin: The lower frequency bound
+    freqmax: The upper frequency bound
+    smooth_N: integer, it defines the half window length to smooth
+    freq_norm: whitening method between 'one-bit' and 'RMA'
+  <Returns>
+    FFTRawSign: The FFT (numpy.ndarray) of the whitened input trace in [freqmin, freqmax]
+"""
+#
+def whiten(data, delta, freqmin, freqmax, smooth_N, freq_norm):
+#
+#------ Speed up FFT by padding to optimal size for FFTPACK
+    if data.ndim == 1:
+        axis = 0
+    elif data.ndim == 2:
+        axis = 1
+#
+    Nfft = int(next_fast_len(int(data.shape[axis])))
+#
+#------ Apodization number to the left and to the right
+    Napod = 100
+#
+    Nfft = int(Nfft)
+    freqVec = scipy.fftpack.fftfreq(Nfft, d=delta)[:Nfft // 2]
+    J = np.where((freqVec >= freqmin) & (freqVec <= freqmax))[0]
+    low = J[0] - Napod
+    if low <= 0:
+        low = 1
+#
+    left = J[0]
+    right = J[-1]
+    high = J[-1] + Napod
+    if high > Nfft/2:
+        high = int(Nfft//2)
+#
+    FFTRawSign = scipy.fftpack.fft(data, Nfft,axis=axis)
+#
+#------  Left tapering:
+    if axis == 1:
+        FFTRawSign[:,0:low] *= 0
+        FFTRawSign[:,low:left] = np.cos(
+            np.linspace(np.pi / 2., np.pi, left - low)) ** 2 * np.exp(
+            1j * np.angle(FFTRawSign[:,low:left]))
+#
+#------ Pass band:
+        if freq_norm == 'phase_only':
+            FFTRawSign[:,left:right] = np.exp(1j * np.angle(FFTRawSign[:,left:right]))
+        elif freq_norm == 'rma':
+            for ii in range(data.shape[0]):
+                tave = moving_ave(np.abs(FFTRawSign[ii,left:right]),smooth_N)
+                FFTRawSign[ii,left:right] = FFTRawSign[ii,left:right]/tave
+#
+#------  Right tapering:
+        FFTRawSign[:,right:high] = np.cos(
+            np.linspace(0., np.pi / 2., high - right)) ** 2 * np.exp(
+            1j * np.angle(FFTRawSign[:,right:high]))
+        FFTRawSign[:,high:Nfft//2] *= 0
+#
+#------  Hermitian symmetry -> input is real
+        FFTRawSign[:,-(Nfft//2)+1:] = np.flip(np.conj(FFTRawSign[:,1:(Nfft//2)]),axis=axis)
+    else:
+        FFTRawSign[0:low] *= 0
+        FFTRawSign[low:left] = np.cos(
+            np.linspace(np.pi / 2., np.pi, left - low)) ** 2 * np.exp(
+            1j * np.angle(FFTRawSign[low:left]))
+#
+#------  Pass band:
+        if freq_norm == 'phase_only':
+            FFTRawSign[left:right] = np.exp(1j * np.angle(FFTRawSign[left:right]))
+        elif freq_norm == 'rma':
+            tave = moving_ave(np.abs(FFTRawSign[left:right]),smooth_N)
+            FFTRawSign[left:right] = FFTRawSign[left:right]/tave
+#
+#------  Right tapering:
+        FFTRawSign[right:high] = np.cos(
+            np.linspace(0., np.pi / 2., high - right)) ** 2 * np.exp(
+            1j * np.angle(FFTRawSign[right:high]))
+        FFTRawSign[high:Nfft//2] *= 0
+#
+#------  Hermitian symmetry  -> input is real
+        FFTRawSign[-(Nfft//2)+1:] = FFTRawSign[1:(Nfft//2)].conjugate()[::-1]
+#
+#------  Returns
+    return FFTRawSign
+#
+# -------------- End of function   ---------------------
+#
+# ---------- Wrapper for spectral normalization and whitening ----------
+"""
+Transforms to frequency domain, whitens the amplitude spectrum in the frequency domain between *freqmin* and *freqmax*,
+ and returns the whitened fft.
+  <Args>
+    data: A 2D matrix of all segmented noise data
+    dt: The sampling distance in seconds
+    freqmin:   The lower frequency bound
+    freqmax:   The upper frequency bound
+    smooth_N:  Integer, it defines the half window length to smooth
+    time_norm: Time-domain normalization -> 'one_bit' or 'rma'
+    freq_norm: Whitening method -> 'one-bit' and 'RMA'
+  <Returns>
+    FFTRawSign: The FFT (numpy.ndarray) of the whitened input trace in [freqmin, freqmax]
+"""
+def noise_processing(data, delta, freqmin, freqmax, 
+                     smooth_N = 100, time_norm = False, freq_norm = False):
+#
+    N = data.shape[0]
+#
+#------  Time normalization
+    if time_norm:
+#--- Sign normalization
+        if time_norm == 'one_bit':
+            white = np.sign(data)
+#--- Normalization over smoothed absolute average; running mean
+        elif time_norm == 'rma':
+            white = np.zeros(shape=data.shape,dtype=data.dtype)
+            for kkk in range(N):
+                white[kkk,:] = data[kkk,:]/moving_ave(np.abs(data[kkk,:]),smooth_N)
+#--- Don't normalize
+    else:
+        white = data
+#
+#------ whiten
+    if freq_norm:
+#--- Whiten and return FFT
+        White = whiten(white, delta, freqmin, freqmax, smooth_N, freq_norm)
+    else:
+#--- Return FFT
+        Nfft = int(next_fast_len(int(dataS.shape[1])))
+        White = scipy.fftpack.fft(white, Nfft, axis=1)
+#
+#------  Returns
+    return White
+#
+# -------------- End of function   ---------------------
+#
+# ---------- Running smooth average ----------
+"""
+This function does running smooth average for an array (use numba for performance)
+  <Args>
+    A: 1-D array of data to be smoothed
+    N: Defines the half window length to smooth (integer)
+  <Returns>
+    B: 1-D array with smoothed data
+"""
+def moving_ave(A,N):
+#
+    A = np.concatenate((A[:N],A,A[-N:]),axis=0)
+    B = np.zeros(A.shape,A.dtype)
+
+    tmp=0.
+    for pos in range(N,A.size-N):
+        # do summing only once
+        if pos==N:
+            for i in range(-N,N+1):
+                tmp+=A[pos+i]
+        else:
+            tmp=tmp-A[pos-N-1]+A[pos+N]
+        B[pos]=tmp/(2*N+1)
+        if B[pos]==0:
+            B[pos]=1
+    return B[N:-N]
+#
+# -------------- End of function   ---------------------
+#
+# ---------- Cross-correlation ----------
+"""
+Does the cross-correlation in freq domain. Keeps the sub-stacks of the cross-correlation if needed, taking advantage of
+ the linear relationship of ifft. Stacking is performed in spectrum domain, reducing the total number of ifft.
+ 
+  <Args>
+    fft1:          Source station power (smoothed) spectral density
+    fft2:          Receiver station raw FFT spectrum
+    dt:            sampling rate (in s)
+    freqmin:       minimum frequency (Hz)
+    freqmax:       maximum frequency (Hz)
+    Nfft:          number of frequency points for ifft
+    maxlag:        maximum lags to keep in the cross correlation
+    dataS_t:       matrix of datetime object
+    method:        'xcorr' or "coherency"
+    substack:      sub-stack cross-correlationS or not
+    substack_len:  multiples of cc_len to stack ove
+    smoothspect_N: number of points to be smoothed for running-mean average (freq-domain, method=="coherency")
+  <Returns>
+    s_corr: 1D or 2D matrix of the averaged or sub-stacks of cross-correlation functions in time domain
+    t_corr: timestamp for each sub-stack or averaged function
+    n_corr: number of included segments for each sub-stack or averaged function
+"""
+#
+def correlate(fft1, fft2, dt, dataS_t,
+              freqmin, freqmax, maxlag,
+              method = 'xcorr', substack = False, substack_len  = None, smoothspect_N = None):
+#
+#------ check on fft1/2 dimensions: put a cap on them, assuning same diensions in both
+    if len(fft1) != len(fft2): raise ValueError("fft1 and fft2 must have the same length")
+#--- nwin = number of segments in the 2D fft(i) matrix
+#
+#------ fft1 & fft2 are 2-D
+    if fft1.ndim == 2:
+        nwin  = fft1.shape[0]
+        Nfft = fft1.shape[1]
+        Nfft2 = Nfft//2
+#--- Cap second dimension to Nfft2
+        fft1 = fft1[:, :Nfft2]
+        fft2 = fft2[:, :Nfft2]
+#--- convert 2D array into 1D
+        corr = np.zeros(nwin*Nfft2,dtype=np.complex64)
+#        corr = fft1.reshape(fft1.size,)*fft2.reshape(fft2.size,)
+        corr = fft1.reshape(-1) * fft2.reshape(-1)
+#
+#------ fft1 & fft2 are 1-D
+    elif fft1.ndim == 1:
+        nwin  = 1
+        Nfft = fft1.shape[0]
+        Nfft2 = Nfft//2
+#--- Cap to Nfft2
+        fft1 = fft1[:Nfft2]
+        fft2 = fft2[:Nfft2]
+        corr = np.zeros(nwin*Nfft2,dtype=np.complex64)
+        corr = fft1 * fft2
+    else:
+        raise ValueError("fft must be either 1 or 2-dimensions")
+#
+#------ method == coherency
+    if method == "coherency":
+        temp = moving_ave(np.abs(fft2.reshape(fft2.size,)),smoothspect_N)
+        corr /= temp
+    corr  = corr.reshape(nwin,Nfft2)            #it was Nfft2
+#
+#------ method != coherency
+    if substack:
+        if substack_len == cc_len:
+            # choose to keep all fft data for a day
+            s_corr = np.zeros(shape=(nwin,Nfft),dtype=np.float32)   # stacked correlation
+            ampmax = np.zeros(nwin,dtype=np.float32)
+            n_corr = np.zeros(nwin,dtype=np.int16)                  # number of correlations for each substack
+            t_corr = dataS_t                                        # timestamp
+            crap   = np.zeros(Nfft,dtype=np.complex64)
+            for i in range(nwin):
+                n_corr[i]= 1
+                crap[:Nfft2] = corr[i,:]            #it was Nfft2
+                crap[:Nfft2] = crap[:Nfft2]-np.mean(crap[:Nfft2])   # remove the mean in freq domain (spike at t=0). It was Nfft2
+                crap[-(Nfft2)+1:] = np.flip(np.conj(crap[1:(Nfft2)]),axis=0)            #it was Nfft2
+                crap[0]=complex(0,0)
+                s_corr[i,:] = np.real(np.fft.ifftshift(scipy.fftpack.ifft(crap, Nfft, axis=0)))
+
+            # remove abnormal data
+            ampmax = np.max(s_corr,axis=1)
+            tindx  = np.where( (ampmax<20*np.median(ampmax)) & (ampmax>0))[0]
+            s_corr = s_corr[tindx,:]
+            t_corr = t_corr[tindx]
+            n_corr = n_corr[tindx]
+
+        else:
+            # get time information
+            Ttotal = dataS_t[-1]-dataS_t[0]             # total duration of what we have now
+            tstart = dataS_t[0]
+
+            nstack = int(np.round(Ttotal/substack_len))
+            ampmax = np.zeros(nstack,dtype=np.float32)
+            s_corr = np.zeros(shape=(nstack,Nfft),dtype=np.float32)
+            n_corr = np.zeros(nstack,dtype=np.int)
+            t_corr = np.zeros(nstack,dtype=np.float)
+            crap   = np.zeros(Nfft,dtype=np.complex64)
+
+            for istack in range(nstack):
+                # find the indexes of all of the windows that start or end within
+                itime = np.where( (dataS_t >= tstart) & (dataS_t < tstart+substack_len) )[0]
+                if len(itime)==0:tstart+=substack_len;continue
+
+                crap[:Nfft2] = np.mean(corr[itime,:],axis=0)   # linear average of the correlation. It was Nfft2
+                crap[:Nfft2] = crap[:Nfft2]-np.mean(crap[:Nfft2])   # remove the mean in freq domain (spike at t=0). It was Nfft2
+                crap[-(Nfft2)+1:]=np.flip(np.conj(crap[1:(Nfft2)]),axis=0)            #it was Nfft2
+                crap[0]=complex(0,0)
+                s_corr[istack,:] = np.real(np.fft.ifftshift(scipy.fftpack.ifft(crap, Nfft, axis=0)))
+                n_corr[istack] = len(itime)               # number of windows stacks
+                t_corr[istack] = tstart                   # save the time stamps
+                tstart += substack_len
+                #print('correlation done and stacked at time %s' % str(t_corr[istack]))
+
+            # remove abnormal data
+            ampmax = np.max(s_corr,axis=1)
+            tindx  = np.where( (ampmax<20*np.median(ampmax)) & (ampmax>0))[0]
+            s_corr = s_corr[tindx,:]
+            t_corr = t_corr[tindx]
+            n_corr = n_corr[tindx]
+#
+#------ Not substack
+    else:
+        # average daily cross correlation functions
+        ampmax = np.max(corr,axis=1)
+        tindx  = np.where( (ampmax<20*np.median(ampmax)) & (ampmax>0))[0]
+        n_corr = nwin
+        s_corr = np.zeros(Nfft,dtype=np.float32)
+        t_corr = dataS_t[0]
+        crap   = np.zeros(Nfft,dtype=np.complex64)
+        crap[:Nfft2] = np.mean(corr[tindx],axis=0)            #it was Nfft2
+        crap[:Nfft2] = crap[:Nfft2]-np.mean(crap[:Nfft2],axis=0)            #it was Nfft2
+        crap[-(Nfft2)+1:]=np.flip(np.conj(crap[1:(Nfft2)]),axis=0)            #it was Nfft2
+        s_corr = np.real(np.fft.ifftshift(scipy.fftpack.ifft(crap, Nfft, axis=0)))
+
+    # trim the CCFs in [-maxlag maxlag]
+    t = np.arange(-Nfft2+1, Nfft2)*dt            #it was Nfft2
+    ind = np.where(np.abs(t) <= maxlag)[0]
+    if s_corr.ndim==1:
+        s_corr = s_corr[ind]
+    elif s_corr.ndim==2:
+        s_corr = s_corr[:,ind]
+#
+#------  Returns
+    return s_corr, t_corr, n_corr
+#
+# -------------- End of function   ---------------------
+
+
+#
+# ---------- extract the dispersion from the image ----------
+"""
+Takes the dispersion image from CWT as input, tracks the global maxinum on
+    the wavelet spectrum amplitude and extract the sections with continous and high quality data
+  <Args>
+    amp:   2D amplitude matrix of the wavelet spectrum
+    phase: 2D phase matrix of the wavelet spectrum
+    per:   period vector for the 2D matrix
+    vel:   vel vector of the 2D matrix
+  <Returns>
+    per:  central frequency of each wavelet scale with good data
+    gv:   group velocity vector at each frequency
+"""
+def extract_dispersion(amp,per,vel):
+#
+    maxgap = 5
+    nper = amp.shape[0]
+    gv   = np.zeros(nper,dtype=np.float32)
+    dvel = vel[1]-vel[0]
+#
+#------  find global maximum
+    for ii in range(nper):
+        maxvalue = np.max(amp[ii],axis=0)
+        indx = list(amp[ii]).index(maxvalue)
+        gv[ii] = vel[indx]
+#
+#------  check the continuous of the dispersion
+    for ii in range(1,nper-15):
+        # 15 is the minumum length needed for output
+        for jj in range(15):
+            if np.abs(gv[ii+jj]-gv[ii+1+jj])>maxgap*dvel:
+                gv[ii] = 0
+                break
+#
+#------  remove the bad ones
+    indx = np.where(gv>0)[0]
+#
+#------  Returns
+    return per[indx],gv[indx]
 #
 # -------------- End of function   ---------------------
 #
@@ -749,7 +1240,7 @@ def BeamFK(st, MTparam, phone_geo, **kwargs):
 #
 #
 # ---------- Stream/Trace Pre-processing  ----------
-def otrstr(tr0, MTparam, verbose=True):
+def otrstr(tr0, MTparam, line = ['bs', 59.2, 60.8], verbose=True):
     """ 
     Process the stream/trace tr. A simpler version of the original otrstr.
     <Arguments>
@@ -759,7 +1250,7 @@ def otrstr(tr0, MTparam, verbose=True):
      │   i =   0    1    2    3    4     5     6
      └─> dtr       -> Remove trends: 0 = no; 1 = yes  
          line      -> Notch 60Hz:    0 = no; 1 = yes
-         ftype     -> Filter type:   lp=lowpass, hp=highpass, bp=bandpass, bs=bandstop  
+         ftype     -> Filter type:   lp=lowpass, hp=highpass, bp=bandpass, bs=bandstop, no= no filter
          Fmin Fmax -> Corner frequencies.
          taper     -> Taper ends:    0 = no; 1 = yes
          gain      -> Gain data:     0 = no; 1 = yes
@@ -778,15 +1269,17 @@ def otrstr(tr0, MTparam, verbose=True):
             print(f">> The mean of 1st original trace is {dummy}")
 #------------  Filter 60Hz line with fixed limits for TTB
     if MTparam[1] == int(1):
-        dummy = ['bs', 59.2, 60.8]
-        tr, ftype, flims = TrFlt(tr, ent=dummy)
+
+#        dummy = ['bs', 59.2, 60.8]
+        tr, ftype, flims = TrFlt(tr, ent=line)
         if verbose:
-            print(f">> Notched original trace from {dummy[1]} to {dummy[-1]}")
+            print(f">> Notched original trace from {line[1]} to {line[2]}")
 #
 #------------  Filter the data.
     ent = [MTparam[2], MTparam[3], MTparam[4]]
-    tr, ftype, flims = TrFlt(tr, ent=ent)
-    if verbose: print(f">> Useful range due to {ftype} filter: {flims[0]} to {flims[1]}Hz.")
+    if MTparam[2] != 'no':
+        tr, ftype, flims = TrFlt(tr, ent=ent)
+        if verbose: print(f">> Useful range due to {ftype} filter: {flims[0]} to {flims[1]}Hz.")
 #
 #------------  Taper the data with 10% Hanning
     if MTparam[5] == int(1):
