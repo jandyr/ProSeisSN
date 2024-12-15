@@ -515,7 +515,7 @@ def noise_processing(data, delta, freqmin, freqmax,
         White = whiten(white, delta, freqmin, freqmax, smooth_N, freq_norm)
     else:
 #--- Return FFT
-        Nfft = int(next_fast_len(int(dataS.shape[1])))
+        Nfft = int(next_fast_len(int(data.shape[1])))
         White = scipy.fftpack.fft(white, Nfft, axis=1)
 #
 #------  Returns
@@ -676,7 +676,7 @@ def correlate(fft1, fft2, dt, dataS_t,
 #
 #------ Not substack
     else:
-        # average daily cross correlation functions
+        # average cross correlation functions
         ampmax = np.max(corr,axis=1)
         tindx  = np.where( (ampmax<20*np.median(ampmax)) & (ampmax>0))[0]
         n_corr = nwin
@@ -969,7 +969,7 @@ def array_lsq(st, X):
     ganther -> a gather
     bcenter -> Gather baricenter (field: lat= -1.201925, lon= -48.506498; Datum  WGS84)
 """
-def creastrm(st, gloc, hght = 5.):
+def creastrm(st, gloc, hght = 5., surv = 'TTB22'):
 #------ Initialization
     gather = Stream()
     lon = 0.; lat = 0.; i   = 0
@@ -980,7 +980,7 @@ def creastrm(st, gloc, hght = 5.):
         tr.stats.sampling_rate = t.stats.sampling_rate
         tr.stats.station       = f"{gloc[i,0]}"                         # Assign station name   
         tr.stats.starttime     = t.stats.starttime
-        tr.stats.network       = "TTB22"                                # Assign network code
+        tr.stats.network       = surv                                # Assign network code
         tr.stats.channel       = "HHZ"                                  # Assign channel code
         tr.stats.location      = "0"                                    # Assign location code
         tr.stats.distance      = t.stats.seg2.RECEIVER_LOCATION         # Distance along cable
