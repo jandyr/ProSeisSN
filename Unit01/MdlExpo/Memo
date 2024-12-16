@@ -153,5 +153,47 @@ Strategies to Mitigate Mixing:
 
     Separate Analysis by Station Group: If possible, you could group stations based on their distance from the center of the array and analyze different subsets of station pairs separately, with each group focusing on a different depth range. Afterward, the separate models could be integrated with careful consideration of the spatial coverage and depth sensitivity of each group.
 ----------------------------------------------------------------------------------------------------
+Concept of Phase Matching for Azimuth Zoning:
+
+In a circular array, each station pair samples the Rayleigh waves coming from different azimuths (angles) relative to the center of the array. The key insight is that the phase velocity of Rayleigh waves can vary depending on the azimuth of the incoming waves due to lateral heterogeneity in the subsurface. By using phase matching to align wavefronts arriving at different station pairs, you can roughly estimate the portion of the subsurface that each pair is sensitive to.
+
+This can help reduce the mixing of different earth models, allowing for more accurate inversion by limiting the amount of lateral heterogeneity and depth mixing in your dispersion curves.
+Steps for Using Phase Matching to Implement Azimuth Zoning:
+
+    Calculate the Phase Velocity at Different Azimuths:
+        First, compute the f-k spectra (frequency-wavenumber spectra) for each station pair across the entire frequency range of interest.
+        In the f-k domain, you can track the phase velocity of the Rayleigh wave as a function of both frequency and wavenumber. The phase velocity will generally show a distinct pattern depending on the source location and the propagation direction relative to each station pair.
+
+    Identify the Propagation Directions:
+        For each station pair, calculate the apparent slowness (inverse of phase velocity) for different azimuths and compare the dominant propagation directions based on the peak locations in the f-k spectra.
+        Use ray-tracing or phase-front analysis to understand which azimuths correspond to specific pathways of the surface waves from the diffuse sources. This will allow you to identify which station pairs are most sensitive to different azimuthal directions.
+
+    Cluster Station Pairs by Azimuth:
+        Once you've identified the phase velocities and their associated azimuths, group the station pairs based on the similarity of the azimuths from which they sample the Rayleigh waves. This can be done by clustering pairs that share similar propagation directions.
+        For example, you might divide your array into sector-like regions around the circular array, such as North, South, East, and West, or finer divisions depending on the data resolution. Each group of station pairs within a particular azimuthal sector will tend to sample Rayleigh waves from similar portions of the Earth, reducing the lateral heterogeneity when stacking dispersion curves.
+
+    Stack Dispersion Curves Within Each Azimuthal Sector:
+        For each azimuthal zone or cluster, stack the dispersion curves (or average the phase velocities at each frequency) from the station pairs within that zone. This should yield a more homogeneous dispersion curve that reflects a specific region or direction of the subsurface.
+        By limiting the number of station pairs that are mixed together, you can avoid blending dispersion information from widely different parts of the subsurface.
+
+    Inversion for Each Azimuthal Sector:
+        Once you have azimuthally-resolved dispersion curves, you can invert each sector separately for a shear wave velocity profile. This allows you to construct a more localized model of the subsurface, which can then be integrated into a 3D model by considering the different azimuthal sectors.
+        Depending on the level of lateral variation in the Earth’s structure, you might then perform an interpolation between the different sectors to create a full 3D shear wave velocity model.
+
+    Combine Results from Different Azimuthal Zones:
+        After inversion for each azimuthal sector, you can combine the results into a final 3D shear wave velocity model or a full dispersion curve that reflects a more accurate subsurface structure, as you are now accounting for the spatial heterogeneity in the wave propagation direction.
+        Alternatively, if the purpose is to estimate a single global dispersion curve, you can weight the results from different sectors according to their azimuthal coverage or sensitivity to depth.
+
+Why This Works:
+
+    Phase matching allows you to isolate the contributions from different azimuthal directions, reducing the risk of averaging signals from regions that are sensitive to different depths or lateral variations. Each station pair is likely to be more sensitive to certain portions of the subsurface depending on its azimuthal alignment relative to the sources, and phase matching helps ensure that you are averaging dispersion curves that reflect similar earth models.
+    By grouping station pairs based on their azimuthal direction, you can reduce lateral mixing, which improves the depth resolution of your inversion and helps to avoid artifacts caused by blending heterogeneous subsurface features.
+
+Practical Considerations:
+
+    Ray Tracing or Phase Front Analysis: This is important to estimate the true azimuthal sensitivity of each station pair. For a diffuse source distribution, the propagation directions of the waves will vary, and considering how the waves propagate from different source regions is key to defining accurate azimuthal zones.
+    Data Resolution: The accuracy of phase matching depends on the density of the array and the frequency content. For high-frequency surface waves, azimuthal variations are more pronounced, whereas for lower frequencies, the waves might average out over larger distances, making azimuth zoning less effective.
+    Choice of Zoning: The number of azimuthal zones you create will depend on the size of the array and the expected lateral heterogeneity in the Earth’s structure. Fine zoning might be necessary in areas with high heterogeneity, while coarser zoning could suffice for more homogeneous regions.
+-------------------------------------------------------------------------------------------------------------------------------------
 
 
