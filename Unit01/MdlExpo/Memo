@@ -67,3 +67,56 @@ Key Points to Remember
 By applying f-k analysis to your cross-correlation results, you can effectively extract and analyze surface waves, which are critical for mapping subsurface shear-wave velocity profiles and other geophysical characteristics of the Earth’s crust.
 
 ---------------------------------------------------------------------------------------
+Data Preparation:
+
+    Collect the seismic data from all stations in the array. The data should ideally be pre-processed (filtered and normalized) to isolate the Rayleigh wave signal, often within a frequency range of interest.
+    Apply time-domain windows or tapering (e.g., cosine taper) to reduce edge effects and noise.
+
+2. Compute the f-k Spectra:
+
+For each station pair (i.e., between stations A and B):
+
+    Fourier Transform the time-domain signals from both stations to obtain their frequency-domain data.
+    Compute the cross-spectral density (CSD) or auto-spectral density for each frequency component. This helps identify the energy distribution over wavenumber (k) and frequency (f).
+    f-k Transformation: Perform the Fourier transform of the cross-correlation or the spatial correlation between the two stations to obtain the f-k spectra. This gives you information about the wavenumber and frequency of the wave components, helping to identify the phase velocities at different frequencies.
+
+S(f,k)=∫∫x(t)⋅y(t)⋅e−i2π(ft−kx)dtdx
+S(f,k)=∫∫x(t)⋅y(t)⋅e−i2π(ft−kx)dtdx
+
+where:
+
+    x(t)x(t) and y(t)y(t) are the signals from the two stations,
+    ff is the frequency,
+    kk is the wavenumber.
+
+3. Identify Rayleigh Wave Energy:
+
+    From the f-k spectra, identify the Rayleigh wave signal based on the dispersion relation (Rayleigh waves have specific characteristics in the f-k domain). You’ll typically look for a linear relationship between frequency and wavenumber in the lower-frequency range, corresponding to Rayleigh wave propagation.
+    Use the phase velocity vp=f/kvp​=f/k, which can be extracted from the dominant peaks in the f-k spectrum.
+
+4. Estimate Phase Velocity Dispersion Curve:
+
+For each station pair:
+
+    Determine the phase velocity vp(f)vp​(f) at different frequencies by identifying the peak of the f-k spectrum at each frequency.
+    Construct a phase velocity dispersion curve by plotting phase velocity vpvp​ against frequency ff. This curve represents the dispersion of Rayleigh waves for the array.
+
+5. Combine the Results from All Pairs of Stations:
+
+    Average the phase velocity estimates from all the station pairs. This can be done by taking the mean of the phase velocities at each frequency across all pairs. This helps to reduce noise and improve the accuracy of the dispersion curve.
+    If you have multiple pairs of stations, you will get multiple estimates for the phase velocity at each frequency, so you can average them to obtain a more robust and precise dispersion curve.
+
+vp(f)=1N∑i=1Nvp,i(f)
+vp​(f)=N1​i=1∑N​vp,i​(f)
+
+where NN is the number of station pairs and vp,i(f)vp,i​(f) is the phase velocity from the ii-th pair at frequency ff.
+6. Invert the Dispersion Curve to Estimate the S-velocity Profile:
+
+Once you have the dispersion curve of phase velocities, you can invert it to estimate the subsurface shear wave velocity profile Vs(z)Vs​(z). This inversion can be performed using techniques like:
+
+    Least-squares inversion,
+    Monte Carlo methods,
+    Bayesian inversion, or any other method suited for surface wave tomography.
+
+You will need a model that describes how the Rayleigh wave phase velocity varies with depth in the Earth (e.g., a layered model).
+
