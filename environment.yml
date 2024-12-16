@@ -32,7 +32,6 @@ dependencies:
   - pyasdf
   - pytorch
   - nvidia
-  - numba
   - pandas
   - pylops>=2.0.0
   
