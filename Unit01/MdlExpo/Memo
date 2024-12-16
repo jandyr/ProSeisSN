@@ -1,0 +1,69 @@
+Steps for Applying f-k Analysis to Cross-Correlation Results
+1. Obtain Cross-Correlation Results
+
+    Calculate Cross-Correlation: As mentioned earlier, compute the cross-correlation between the time series recorded by pairs of sensors. After stacking the cross-correlation functions over time, you will obtain a coherent signal that mainly contains surface waves at specific frequencies.
+    The result will be a time-domain function for each sensor pair, representing the apparent travel time of seismic waves between the two sensors.
+
+2. Convert Cross-Correlation to the Frequency Domain
+
+    Fourier Transform: Apply the Fourier Transform (typically Fast Fourier Transform or FFT) to the cross-correlation function to convert it into the frequency domain. This will give you the spectral content of the signal, which contains information about the frequency of the surface waves.
+
+    For each cross-correlation function C(t)C(t), compute the Fourier transform:
+    C^(f)=∫C(t)⋅e−i2πftdt
+    C^(f)=∫C(t)⋅e−i2πftdt
+
+    where ff is the frequency.
+
+    This will produce a frequency spectrum that can be analyzed for dominant frequencies.
+
+3. Calculate the Wavenumber (k)
+
+    Travel Time and Distance: For each frequency, use the apparent travel time between the sensor pair and the distance between the sensors to calculate the wavenumber (k). The wavenumber is related to the phase velocity vv of the surface waves and the frequency ff by the equation:
+    k=2πfv
+    k=v2πf​
+
+    where vv is the phase velocity (which can be estimated from the time delay between sensors) and ff is the frequency of the surface wave.
+
+    For each frequency, you will calculate the corresponding wavenumber for the sensor pair.
+
+4. Apply f-k Transform
+
+    After obtaining the frequency and wavenumber information for each sensor pair, organize the data in a grid, where the x-axis represents the wavenumber (k) and the y-axis represents the frequency (f). This is your f-k domain.
+
+    f-k Spectrum: Construct a 2D spectrum by plotting the frequency (f) against the wavenumber (k) values. The surface waves (typically Rayleigh waves in passive seismic studies) will form a distinct linear or elliptical pattern in the f-k domain. This is because surface wave energy propagates with a characteristic relationship between frequency and wavenumber (dispersion).
+
+    You can visualize the f-k spectrum, where:
+        Surface waves will form a line or curve in the spectrum, as their velocity is dispersive (dependent on frequency).
+        Body waves and noise will often appear as distinct features in the f-k plot, but they are typically easier to separate because their dispersion characteristics differ from surface waves.
+
+5. Interpret the Dispersion Curve
+
+    Once you have the f-k spectrum, you can trace the dispersion curve. The surface waves (e.g., Rayleigh waves) will show a clear, identifiable slope in the f-k plot, which indicates the relationship between frequency and wavenumber (i.e., phase velocity).
+
+    The dispersion curve provides the phase velocity at different frequencies, which is the key to determining the shear-wave velocity structure of the subsurface.
+
+6. Extract the Phase Velocity and Build the Dispersion Curve
+
+    From the f-k spectrum, pick the phase velocity values corresponding to different frequencies. You can extract the phase velocity (often denoted v(ω)v(ω) or v(f)v(f)) from the slope of the surface wave in the f-k domain.
+
+    Plot the dispersion curve, which shows the variation of phase velocity with frequency. The dispersion curve will often be non-linear, and the shape of the curve can help identify the characteristics of different subsurface layers.
+
+7. Inversion of the Dispersion Curve
+
+    Once you have the dispersion curve, you can invert it to obtain the shear-wave velocity (Vs) profile of the subsurface using various inversion methods (e.g., non-linear inversion, least-squares fitting, or Monte Carlo inversion).
+
+    The inversion process matches the observed dispersion curve to a theoretical model of the subsurface, allowing you to derive the shear-wave velocity profile as a function of depth.
+
+Key Points to Remember
+
+    Wavenumber Calculation: The wavenumber depends on the distance between sensors and the phase velocity of the surface waves. Using the apparent travel time between sensor pairs and their distance, you can calculate the wavenumber for each frequency.
+
+    Surface Wave Identification: Surface waves are characterized by their dispersive nature, and they form a distinct pattern in the f-k spectrum. By tracking these waves, you can isolate them from other seismic events or noise.
+
+    Frequency and Wavelength: The frequency range of interest will depend on the depth of investigation. Lower frequencies penetrate deeper, while higher frequencies provide more detailed information about shallow layers.
+
+    Noise Separation: f-k analysis helps you isolate surface waves from noise by identifying their specific dispersion characteristics. Typically, surface waves will dominate in the f-k domain, but noise (such as body waves or cultural noise) can be separated based on its different dispersion characteristics.
+
+By applying f-k analysis to your cross-correlation results, you can effectively extract and analyze surface waves, which are critical for mapping subsurface shear-wave velocity profiles and other geophysical characteristics of the Earth’s crust.
+
+---------------------------------------------------------------------------------------
