@@ -1076,7 +1076,7 @@ def RGloc(filename):
         return np.array(data, dtype=object)
     except FileNotFoundError:
         print(f"Error: File '{filename}' not found.")
-        return None                                 
+        return None
 #
 #
 # -------------- End of function   ---------------------
@@ -1281,9 +1281,9 @@ def otrstr(tr0, MTparam, line = ['bs', 59.2, 60.8], verbose=True):
         tr, ftype, flims = TrFlt(tr, ent=ent)
         if verbose: print(f">> Useful range due to {ftype} filter: {flims[0]} to {flims[1]}Hz.")
 #
-#------------  Taper the data with 10% Hanning
+#------------  Taper the data with 5% Hanning
     if MTparam[5] == int(1):
-        tr.taper(type = 'hann', max_percentage = 0.1)
+        tr.taper(type = 'hann', max_percentage = 0.05)
 #
 #------------  Gain trace
     if MTparam[6] == int(1):
